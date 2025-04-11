@@ -1,0 +1,413 @@
+    <svg viewBox="-13.441 30.731 757.62 268.38" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+        <defs>
+            <radialGradient gradientUnits="userSpaceOnUse" cx="154.004" cy="283.105" r="83.328" id="gradient-0"
+                gradientTransform="matrix(0.010678, 0.905311, -1.074476, 0.005986, 626.959213, 11.438679)">
+                <stop offset="0" style="stop-color: rgb(5, 132, 8);"></stop>
+                <stop offset="1" style="stop-color: rgb(23, 92, 44);"></stop>
+            </radialGradient>
+            <linearGradient gradientUnits="userSpaceOnUse" x1="735.926" y1="745.215" x2="735.926" y2="890.756"
+                id="gradient-1"
+                gradientTransform="matrix(0.999989, -0.006659, 0.013839, 4.045084, -9.996154, -2425.401847)">
+                <stop offset="0" style="stop-color: rgb(246, 246, 246);"></stop>
+                <stop offset="1"></stop>
+            </linearGradient>
+        </defs>
+        <g transform="matrix(1, 0, 0, 1, -1.5903040170669556, 4.356447219848661)">
+            <g transform="matrix(1, 0, 0, 1, 52.270279, 0.152552)">
+                <g transform="matrix(1, 0, 0, 1, -34.710388, 1.068976)">
+                    <g transform="matrix(1, 0, 0, 1, -222.689926, 22.203535)">
+                        <g>
+                            <rect x="242.379" y="82.682" width="164.07" height="139.746"
+                                style="fill: url(&quot;#gradient-0&quot;);"></rect>
+                            <path transform="matrix(-0.571403, 0, 0, -0.452751, 744.90094, 423.675598)"
+                                d="M 880.003 746.565 A 144.078 144.078 0 1 1 591.848 746.926 L 735.926 747.038 Z"
+                                bx:shape="pie 735.926 747.038 0 144.078 89.812 270.045 1@1621d8ae"
+                                style="paint-order: fill; fill: url(&quot;#gradient-1&quot;);"></path>
+                            <g transform="matrix(1, 0, 0, 1, -54.660461, -5.48898)">
+                                <g transform="matrix(1, 0, 0, 1, 33.735, 5.362)"
+                                    style="transform-origin: 263.768px 134.61px;">
+                                    <path
+                                        d="M 282.887 136.507 C 282.56 136.507 282.295 136.265 282.295 135.967 L 282.295 132.759 L 281.092 132.759 L 281.092 135.469 C 281.092 135.767 280.827 136.009 280.5 136.009 L 277.754 136.009 L 277.243 137.567 C 277.168 137.795 276.938 137.952 276.676 137.952 L 272.496 137.952 L 272.496 139.32 L 275.128 139.32 C 275.455 139.32 275.72 139.561 275.72 139.86 L 275.72 141.665 C 275.72 141.963 275.455 142.205 275.128 142.205 L 266.649 142.205 C 266.322 142.205 266.057 141.963 266.057 141.665 L 266.057 139.86 C 266.057 139.561 266.322 139.32 266.649 139.32 L 269.281 139.32 L 269.281 137.952 L 263.185 137.952 C 262.969 137.952 262.769 137.844 262.665 137.67 L 261.676 136.009 L 259.361 136.009 C 259.035 136.009 258.77 135.767 258.77 135.469 L 258.77 132.759 L 257.44 132.759 L 257.44 136.624 C 257.44 136.922 257.175 137.164 256.848 137.164 C 256.521 137.164 256.256 136.922 256.256 136.624 L 256.256 125.452 C 256.256 125.154 256.521 124.912 256.848 124.912 C 257.175 124.912 257.44 125.154 257.44 125.452 L 257.44 129.316 L 258.77 129.316 L 258.77 126.455 C 258.77 126.157 259.035 125.915 259.361 125.915 L 264.289 125.915 L 266.541 123.259 C 266.653 123.127 266.826 123.05 267.009 123.05 L 280.5 123.05 C 280.827 123.05 281.092 123.292 281.092 123.591 L 281.092 129.316 L 282.295 129.316 L 282.295 126.109 C 282.295 125.81 282.56 125.568 282.887 125.568 C 284.6 125.568 285.993 126.841 285.993 128.406 L 285.993 133.67 C 285.993 135.235 284.6 136.507 282.887 136.507 Z M 234.899 130.306 L 234.918 131.376 L 258.77 131.678 L 258.77 130.398 L 234.899 130.306 Z M 267.241 141.124 L 274.537 141.124 L 274.537 140.401 L 267.241 140.401 L 267.241 141.124 Z M 270.465 139.32 L 271.313 139.32 L 271.313 137.952 L 270.465 137.952 L 270.465 139.32 Z M 259.953 134.928 L 260.374 134.928 L 260.374 126.996 L 259.953 126.996 L 259.953 134.928 Z M 265.047 126.786 C 264.934 126.918 264.762 126.996 264.578 126.996 L 261.557 126.996 L 261.557 134.928 L 262.028 134.928 C 262.245 134.928 262.444 135.037 262.548 135.21 L 263.537 136.871 L 276.236 136.871 L 276.748 135.314 C 276.822 135.085 277.053 134.928 277.314 134.928 L 278.376 134.928 L 278.376 124.131 L 267.299 124.131 L 265.047 126.786 Z M 279.909 124.131 L 279.56 124.131 L 279.56 134.928 L 279.909 134.928 L 279.909 124.131 Z M 281.092 130.398 L 281.092 131.678 L 282.295 131.678 L 282.295 130.398 L 281.092 130.398 Z M 284.81 128.406 C 284.81 127.626 284.25 126.963 283.479 126.735 L 283.479 135.341 C 284.25 135.113 284.81 134.45 284.81 133.67 L 284.81 128.406 Z"
+                                        transform="matrix(-1, 0, 0, -1, -0.000015, -0.000008)"
+                                        style="paint-order: stroke; stroke: rgb(117, 192, 216); transform-box: fill-box; transform-origin: 50% 50%;">
+                                    </path>
+                                    <g id="SVGRepo_iconCarrier"
+                                        transform="matrix(0.457377, 0, 0, 0.9823, 282.804474, 122.823021)" >
+                                        <path
+                                            d="m7.982 13.031c-.662 0-1.199-.537-1.199-1.199 0-.662.537-1.199 1.199-1.199.662 0 1.199.537 1.199 1.199 0 .662-.537 1.199-1.199 1.199zm9.123-3.482c-2.404.258-4.601.777-6.684 1.534l.196-.062c-.355-1.142-1.401-1.956-2.638-1.958-.204 0-.403.023-.595.065l.018-.003c-.548-2.251-1.175-4.159-1.93-6.002l.101.279c-1.303-3.278-3.288-3.902-4.713-3.068-1.608.941-.714 2.914.577 4.742 1.342 1.833 2.827 3.433 4.477 4.845l.038.032c-.461.49-.744 1.151-.745 1.879.002.713.275 1.362.721 1.85l-.002-.002c-1.437 1.37-2.763 2.823-3.982 4.364l-.067.087c-2.184 2.766-1.735 4.797-.301 5.615 1.619.923 2.878-.838 3.818-2.871.837-1.825 1.519-3.952 1.94-6.171l.028-.176c.184.046.396.073.614.074h.001c1.221-.003 2.256-.799 2.618-1.899l.006-.02c1.633.506 3.62.952 5.655 1.252l.227.027c3.487.509 5.023-.896 5.013-2.547-.01-1.863-2.166-2.075-4.398-1.871z"
+                                            style="stroke-miterlimit: 4.37; fill: rgb(223, 221, 221);"></path>
+                                    </g>
+                                   
+                                </g>
+                                <path
+                                    d="M 316.652 195.882 C 316.325 195.882 316.06 195.64 316.06 195.342 L 316.06 192.134 L 314.857 192.134 L 314.857 194.844 C 314.857 195.142 314.592 195.384 314.265 195.384 L 311.519 195.384 L 311.008 196.942 C 310.933 197.17 310.703 197.327 310.441 197.327 L 306.261 197.327 L 306.261 198.695 L 308.893 198.695 C 309.22 198.695 309.485 198.936 309.485 199.235 L 309.485 201.04 C 309.485 201.338 309.22 201.58 308.893 201.58 L 300.414 201.58 C 300.087 201.58 299.822 201.338 299.822 201.04 L 299.822 199.235 C 299.822 198.936 300.087 198.695 300.414 198.695 L 303.046 198.695 L 303.046 197.327 L 296.95 197.327 C 296.734 197.327 296.534 197.219 296.43 197.045 L 295.441 195.384 L 293.126 195.384 C 292.8 195.384 292.535 195.142 292.535 194.844 L 292.535 192.134 L 291.205 192.134 L 291.205 195.999 C 291.205 196.297 290.94 196.539 290.613 196.539 C 290.286 196.539 290.021 196.297 290.021 195.999 L 290.021 184.827 C 290.021 184.529 290.286 184.287 290.613 184.287 C 290.94 184.287 291.205 184.529 291.205 184.827 L 291.205 188.691 L 292.535 188.691 L 292.535 185.83 C 292.535 185.532 292.8 185.29 293.126 185.29 L 298.054 185.29 L 300.306 182.634 C 300.418 182.502 300.591 182.425 300.774 182.425 L 314.265 182.425 C 314.592 182.425 314.857 182.667 314.857 182.966 L 314.857 188.691 L 316.06 188.691 L 316.06 185.484 C 316.06 185.185 316.325 184.943 316.652 184.943 C 318.365 184.943 319.758 186.216 319.758 187.781 L 319.758 193.045 C 319.758 194.61 318.365 195.882 316.652 195.882 Z M 268.664 189.681 L 268.683 190.751 L 292.535 191.053 L 292.535 189.773 L 268.664 189.681 Z M 301.006 200.499 L 308.302 200.499 L 308.302 199.776 L 301.006 199.776 L 301.006 200.499 Z M 304.23 198.695 L 305.078 198.695 L 305.078 197.327 L 304.23 197.327 L 304.23 198.695 Z M 293.718 194.303 L 294.139 194.303 L 294.139 186.371 L 293.718 186.371 L 293.718 194.303 Z M 298.812 186.161 C 298.699 186.293 298.527 186.371 298.343 186.371 L 295.322 186.371 L 295.322 194.303 L 295.793 194.303 C 296.01 194.303 296.209 194.412 296.313 194.585 L 297.302 196.246 L 310.001 196.246 L 310.513 194.689 C 310.587 194.46 310.818 194.303 311.079 194.303 L 312.141 194.303 L 312.141 183.506 L 301.064 183.506 L 298.812 186.161 Z M 313.674 183.506 L 313.325 183.506 L 313.325 194.303 L 313.674 194.303 L 313.674 183.506 Z M 314.857 189.773 L 314.857 191.053 L 316.06 191.053 L 316.06 189.773 L 314.857 189.773 Z M 318.575 187.781 C 318.575 187.001 318.015 186.338 317.244 186.11 L 317.244 194.716 C 318.015 194.488 318.575 193.825 318.575 193.045 L 318.575 187.781 Z"
+                                    transform="matrix(-1, 0, 0, -1, 0.00001, -0.000022)"
+                                    style="paint-order: stroke; stroke: rgb(117, 192, 216); transform-box: fill-box; transform-origin: 50% 50%;">
+                                </path>
+                                <path
+                                    d="M 320.22 194.998 C 319.917 194.998 319.672 194.471 319.672 193.82 C 319.672 193.17 319.917 192.642 320.22 192.642 C 320.523 192.642 320.768 193.17 320.768 193.82 C 320.768 194.471 320.523 194.998 320.22 194.998 L 320.22 194.998 Z M 324.393 191.578 C 323.293 191.831 322.288 192.341 321.336 193.084 L 321.425 193.024 C 321.263 191.902 320.784 191.102 320.219 191.1 C 320.125 191.1 320.034 191.123 319.947 191.164 L 319.955 191.161 C 319.704 188.95 319.417 187.076 319.072 185.265 L 319.118 185.539 C 318.522 182.319 317.614 181.707 316.963 182.526 C 316.227 183.45 316.636 185.388 317.227 187.184 C 317.84 188.984 318.52 190.556 319.274 191.943 L 319.292 191.974 C 319.081 192.456 318.951 193.105 318.951 193.82 C 318.952 194.521 319.077 195.158 319.281 195.637 L 319.28 195.636 C 318.622 196.981 318.016 198.409 317.458 199.922 L 317.428 200.008 C 316.429 202.725 316.634 204.72 317.29 205.523 C 318.031 206.43 318.606 204.7 319.036 202.703 C 319.419 200.91 319.731 198.821 319.924 196.641 L 319.936 196.469 C 320.021 196.514 320.118 196.54 320.217 196.541 L 320.218 196.541 C 320.776 196.538 321.25 195.756 321.415 194.676 L 321.418 194.656 C 322.165 195.153 323.074 195.591 324.004 195.886 L 324.108 195.913 C 325.703 196.413 326.406 195.032 326.401 193.411 C 326.396 191.581 325.41 191.372 324.39 191.573 L 324.393 191.578 Z"
+                                    style="stroke-miterlimit: 4.37; fill: rgb(223, 221, 221); transform-box: fill-box; transform-origin: 50% 50%;">
+                                    <animateTransform type="rotate" additive="sum" attributeName="transform" values="-166;0"
+                                        dur="indefinite" fill="freeze" repeatCount="indefinite" keyTimes="0; 1">
+                                    </animateTransform>
+                                    <animateTransform type="skewX" additive="sum" attributeName="transform" values="9;-90"
+                                        begin="0s" dur="indefinite" keyTimes="0; 1" calcMode="discrete"></animateTransform>
+                                </path>
+                            </g>
+                            <rect x="406.427" y="94.865" width="11.895" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <path
+                                d="M 417.985 94.789 H 425.092 A 5 5 0 0 1 430.092 99.789 V 172.949 H 422.985 A 5 5 0 0 1 417.985 167.949 V 94.789 Z"
+                                bx:shape="rect 417.985 94.789 12.107 78.16 0 5 0 5 1@3da962f2"
+                                style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(203, 182, 9);"></path>
+                            <g transform="matrix(1, 0, 0, 1, -9.29961, 35.576759)">
+                                <g transform="matrix(1, 0, 0, 1, -1.631714, 12.276244)">
+                                    <path
+                                        transform="matrix(-0.00068, -0.372829, 0.390332, -0.000712, -623.743958, -356.225891)"
+                                        d="M 1121.241 349.918 A 69.818 69.818 0 1 1 1121.241 489.554 L 1121.241 349.918 Z"
+                                        bx:shape="crescent 1121.241 419.736 69.818 180 0.5 1@26024d63"
+                                        style="fill: rgb(203, 183, 8); transform-box: fill-box; transform-origin: 50% 50%;">
+                                    </path>
+                                    <rect x="505.13" y="74.575" width="54.552" height="100"
+                                        style="stroke-width: 0px; paint-order: stroke; stroke: rgba(203, 183, 8, 0.714); fill: rgb(203, 183, 8);">
+                                    </rect>
+                                </g>
+                            </g>
+                            <path d="M 515.956 63.596 H 523.063 A 5 5 0 0 1 528.063 68.596 V 129.672 H 515.956 V 63.596 Z"
+                                bx:shape="rect 515.956 63.596 12.107 66.076 0 5 0 0 1@7fe5727b"
+                                style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(203, 182, 9);"></path>
+                            <rect x="472.991" y="63.596" width="50" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <rect x="428.235" y="160.849" width="38.977" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <path transform="matrix(0, -1, 1, 0, -264.30954, -0.133545)"
+                                d="M 680.327 112.356 H 784.68 A 5 5 0 0 1 789.68 117.356 V 119.456 A 5 5 0 0 1 784.68 124.456 H 685.327 A 5 5 0 0 1 680.327 119.456 V 112.356 Z"
+                                bx:shape="rect 680.327 112.356 109.353 12.1 0 5 5 5 1@122d038e"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9); transform-box: fill-box; transform-origin: 50% 50%;">
+                            </path>
+                            <rect x="545.769" y="160.849" width="11.895" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <path
+                                d="M 555.062 160.849 H 562.169 A 5 5 0 0 1 567.169 165.849 V 191.428 H 560.062 A 5 5 0 0 1 555.062 186.428 V 160.849 Z"
+                                bx:shape="rect 555.062 160.849 12.107 30.579 0 5 0 5 1@b235b33d"
+                                style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(203, 182, 9);"></path>
+                            <rect x="564.07" y="179.328" width="51.431" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <rect x="780.503" y="179.328" width="21.893" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect>
+                            <path
+                                d="M 802.396 179.328 H 808.395 A 5 5 0 0 1 813.395 184.328 V 210.452 H 807.396 A 5 5 0 0 1 802.396 205.452 V 179.328 Z"
+                                bx:shape="rect 802.396 179.328 10.999 31.124 0 5 0 5 1@7bb7f6be"
+                                style="stroke: rgb(0, 0, 0); stroke-width: 0px; fill: rgb(203, 182, 9);"></path>
+                            <rect x="810.295" y="198.352" width="32.472" height="12.1"
+                                style="stroke: rgb(0, 0, 0); stroke-miterlimit: 10.63; paint-order: fill markers; stroke-width: 0px; vector-effect: non-scaling-stroke; fill: rgb(203, 182, 9);">
+                            </rect><text transform="matrix(1, 0, 0, 1, 31.117304, 5.868867)"
+                                style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px; text-anchor: middle; white-space: pre;">
+                                <tspan x="291.456" y="235.602">ANAEROBIC</tspan>
+                                <tspan x="291.45599365234375" dy="1em">​</tspan>
+                                <tspan>DIGESTOR UNIT</tspan>
+                            </text><text transform="matrix(1, 0, 0, 1, 231.788757, 9.121045)" x="291.45599365234375"
+                                y="235.6020050048828"
+                                style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px; text-anchor: middle; white-space: pre;">BIO-GAS
+                                <tspan x="291.45599365234375" dy="1em">​</tspan>UPGRADATION UNIT</text><text
+                                transform="matrix(1, 0, 0, 1, 413.968536, 9.121048)" x="291.45599365234375"
+                                y="235.6020050048828"
+                                style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px; text-anchor: middle; white-space: pre;">BIO-GAS
+                                <tspan x="291.45599365234375" dy="1em">​</tspan>COMPRESSOR UNIT</text>
+                        </g>
+                    </g>
+                    <g transform="matrix(0.652929, 0, 0, 1, 1.006254, -21.396339)">
+                        <!-- Gray background (full height container) -->
+                        <rect x="145.187" y="136.746" width="13.081" height="125.509" style="fill: rgb(211, 207, 201);"/>
+                        
+                        <!-- Orange loading bar (constrained within gray) -->
+                        <rect x="145.187" y="262.255" width="13.081" height="0" style="fill: rgb(229, 143, 31);">
+                            <!-- Animation values fixed to match container height -->
+                            <animate attributeName="height" 
+                                     values="0;125.509" 
+                                     dur="10s" 
+                                     repeatCount="indefinite"/>
+                            <animate attributeName="y" 
+                                     values="262.255;136.746" 
+                                     dur="10s" 
+                                     repeatCount="indefinite"/>
+                        </rect>
+                    </g>
+                </g>
+            </g>
+            <g id="g-1" transform="matrix(0.365013, 0, 0, 0.312469, 188.241531, 275.594971)">
+                <g transform="matrix(1, 0, 0, 1, 564.632263, -539.929626)">
+                    <path
+                        d="M486.447,211.416c-4.232-9.244-13.331-15.274-23.499-15.274H49.052 c-10.167,0-19.267,6.03-23.499,15.274C14.599,235.342,8.017,265.67,8.017,298.756s6.582,63.414,17.536,87.339 c4.232,9.244,13.331,15.275,23.499,15.275h413.897c10.167,0,19.267-6.03,23.499-15.275c10.954-23.925,17.536-54.254,17.536-87.339 S497.401,235.342,486.447,211.416z"
+                        style="fill: rgb(255, 229, 0);"></path>
+                    <path
+                        d="M375.716,213.244H136.284c-4.722,0-8.551-3.829-8.551-8.551v-17.102c0-4.722,3.829-8.551,8.551-8.551 h239.432c4.722,0,8.551,3.829,8.551,8.551v17.102C384.267,209.415,380.438,213.244,375.716,213.244z"
+                        style="fill: rgb(203, 183, 8);"></path>
+   <!-- Your chimney -->
+   <path d="M 350.063 113.56 L 315.858 113.56 C 311.136 113.56 307.307 117.389 307.307 122.111 L 307.307 181.969 L 358.614 181.969 L 358.614 122.111 C 358.614 117.389 354.785 113.56 350.063 113.56 Z" style="fill: rgb(175, 185, 210);"></path>
+  
+   <!-- Exhaust smoke (wispy lines) -->
+  <!-- Smoke Group -->
+  <g fill="gray">
+    <!-- Smoke 1 -->
+    <ellipse cx="333" cy="105" rx="10" ry="5">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,-30" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0.3;0" dur="3s" repeatCount="indefinite"/>
+    </ellipse>
+
+    <!-- Smoke 2 -->
+    <ellipse cx="338" cy="95" rx="12" ry="6">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,-35" dur="4s" repeatCount="indefinite" begin="0.5s"/>
+      <animate attributeName="opacity" values="0.4;0.2;0" dur="4s" repeatCount="indefinite" begin="0.5s"/>
+    </ellipse>
+
+    <!-- Smoke 3 -->
+    <ellipse cx="328" cy="100" rx="8" ry="4">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,-40" dur="3.5s" repeatCount="indefinite" begin="1s"/>
+      <animate attributeName="opacity" values="0.3;0.1;0" dur="3.5s" repeatCount="indefinite" begin="1s"/>
+    </ellipse>
+  </g>
+                    <path
+                        d="M444.682,196.142v162.472c0,4.722-3.829,8.551-8.551,8.551H84.409 c-9.446,0-17.102-7.656-17.102-17.102V196.142H49.052c-10.167,0-19.266,6.03-23.499,15.273 c-10.954,23.926-17.536,54.254-17.536,87.34c0,33.085,6.582,63.414,17.536,87.34c4.233,9.244,13.331,15.273,23.499,15.273h411.607 V196.142H444.682z"
+                        style="fill: rgb(203, 183, 8);"></path>
+                    <g>
+                        <path
+                            d="M128.868,384.267h-10.82c-4.255,0-7.864,3.129-8.466,7.342l-7.503,52.516h42.756l-7.503-52.516 C136.731,387.396,133.123,384.267,128.868,384.267z"
+                            style="fill: rgb(203, 183, 8);"></path>
+                        <path
+                            d="M393.954,384.267h-10.82c-4.255,0-7.864,3.129-8.466,7.342l-7.503,52.516h42.756l-7.503-52.516 C401.816,387.396,398.209,384.267,393.954,384.267z"
+                            style="fill: rgb(203, 183, 8);"></path>
+                    </g>
+                    <g id="g-3" stroke-linecap="round" stroke-linejoin="round"
+                        transform="matrix(0.406116, 0, 0, 0.36884, 653.255981, 255.278931)"></g>
+                        <defs>
+                            <linearGradient id="dynamicGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:rgb(255, 229, 1)"/>
+                                <stop offset="100%" style="stop-color:rgb(255, 255, 0)">
+                                    <animate attributeName="stop-color" 
+                                        values="rgb(255, 229, 1);rgb(255, 255, 0);rgb(255, 240, 0);rgb(255, 229, 1)" 
+                                        dur="3s" 
+                                        repeatCount="indefinite"/>
+                                </stop>
+                            </linearGradient>
+                        </defs>
+                        
+                        <rect x="653.256" y="328.888" width="251.875" height="114.52"
+                            style="stroke: rgb(0, 0, 0); fill: url(#dynamicGradient);">
+                        </rect>
+                        <text
+                        transform="matrix(2.739628, 0, 0, 3.200317, -18.920992, -378.06366)" x="303.45599365234375"
+                        y="235.6020050048828"
+                        style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 10px;margin-left:10px; text-anchor: middle; white-space: pre;">FILLING
+                        <tspan x="291.45599365234375" dy="1em">​</tspan>SHED</text>
+                </g>
+            </g>
+        </g>
+        <polyline points="208.039 122.444 232.357 66.515 248.405 66.515"
+            transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); stroke-width: 0.3px;">
+        </polyline><text x="250.405" y="60.005" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 6px; font-weight: 700; white-space: pre;">Raw
+            Bio Gas (m³/hr)</text>
+        <text x="250.577" y="67.764" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 6px; white-space: pre;"
+            id="rawbiogas1">111 m³/hr</text>
+        <polyline points="586.951 209.651 618.052 158.91 639.097 158.91"
+            transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); stroke-width: 0.3px;">
+        </polyline><text x="640.097" y="152.889" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 6px; font-weight: 700; white-space: pre;">Comp
+            Bio Gas (kg/min)</text>
+        <text x="640.269" y="160.648" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="fill: rgb(51, 51, 51); font-family: Arial, sans-serif; font-size: 6px; white-space: pre;"
+            id="cbiogas1">111 kg/min</text>
+        <text x="133.874" y="89.903" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="ach41">CH₄ : 
+        110 % v/v</text>
+        <text x="49.694" y="89.903" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="aco21">CO₂ : 
+           130 % v/v</text>
+        <text x="91.784" y="65.903" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="ao21">O₂ : 
+           150 % v/v</text>
+        <text x="91.784" y="109.637" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="ah2s1">H₂S : 
+           160 ppm</text>
+    
+        <text x="500.877" y="192.736" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="cch41">CH₄ : 
+    170 % v/v</text>
+        <text x="426.697" y="192.736" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="cco21">CO₂ : 
+    180 % v/v</text>
+        <text x="426.697" y="212.47" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="compo21">O₂ : 
+            190 % v/v</text>
+        <text x="500.877" y="212.47" transform="matrix(1, 0, 0, 1, 0, 2.842170943040401e-14)"
+            style="font-family: Arial, sans-serif; font-size: 6px; white-space: pre;" id="ch2s1">H₂S : 
+    210 ppm</text>
+        <g transform="matrix(1.1870440244674683, 0, 0, 1.1773099899291992, 224.66412353515628, 181.2932891845703)">
+            <path 
+        d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" 
+        style="fill: rgb(213, 213, 213);"
+    >
+        <animateTransform
+            attributeName="transform"
+            type="translate"
+            from="-5 0"
+            to="5 0"
+            dur="1s"
+            repeatCount="indefinite"
+        />
+        <animate
+            attributeName="opacity"
+            values="0.5;1;0.5"
+            dur="1s"
+            repeatCount="indefinite"
+        />
+    </path>
+        </g>
+        <g transform="matrix(0, -1.187044024467, 1.177309989929, 0, 251.853261440344, 153.471361575337)"
+        style="transform-origin: 12px 12px;">
+         <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+             <animateTransform
+                 attributeName="transform"
+                 type="translate"
+                 from="-5 0"
+                 to="5 0"
+                 dur="1s"
+                 repeatCount="indefinite"
+             />
+             <animate
+                 attributeName="opacity"
+                 values="0.5;1;0.5"
+                 dur="1s"
+                 repeatCount="indefinite"
+             />
+         </path>
+     </g>
+
+       
+     <g transform="matrix(0, -1.187044024467, 1.177309989929, 0, 251.853255718298, 107.454814255672)"
+     style="transform-origin: 12px 12px;">
+      <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+          <animateTransform
+              attributeName="transform"
+              type="translate"
+              from="-5 0"
+              to="5 0"
+              dur="1s"
+              repeatCount="indefinite"
+          />
+          <animate
+              attributeName="opacity"
+              values="0.5;1;0.5"
+              dur="1s"
+              repeatCount="indefinite"
+          />
+      </path>
+  </g>
+  <g transform="matrix(1.1870440244674683, 0, 0, 1.1773099899291992, 276.4408264160156, 83.46202850341797)"
+  style="transform-origin: 12px 12px;">
+   <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill:  rgb(213, 213, 213);">
+       <animateTransform
+           attributeName="transform"
+           type="translate"
+           from="-5 0"
+           to="5 0"
+           dur="1s"
+           repeatCount="indefinite"
+       />
+       <animate
+           attributeName="opacity"
+           values="0.5;1;0.5"
+           dur="1s"
+           repeatCount="indefinite"
+       />
+   </path>
+</g>
+<g transform="matrix(0, 1.187044024467, -1.177309989929, 0, 303.235685855799, 107.454813658756)"
+style="transform-origin: 12px 12px;">
+ <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+     <animateTransform
+         attributeName="transform"
+         type="translate"
+         from="-5 0"
+         to="5 0"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+     <animate
+         attributeName="opacity"
+         values="0.5;1;0.5"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+ </path>
+</g>
+<g transform="matrix(1.1870440244674683, 0, 0, 1.1773099899291992, 361.673095703125, 198.65184020996094)"
+style="transform-origin: 12px 12px;">
+ <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+     <animateTransform
+         attributeName="transform"
+         type="translate"
+         from="-5 0"
+         to="5 0"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+     <animate
+         attributeName="opacity"
+         values="0.5;1;0.5"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+ </path>
+</g>
+
+<g transform="matrix(0, 1.187044024467, -1.177309989929, 0, 205.915684253626, 152.370639385967)"
+style="transform-origin: 12px 12px;">
+ <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+     <animateTransform
+         attributeName="transform"
+         type="translate"
+         from="-5 0"
+         to="5 0"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+     <animate
+         attributeName="opacity"
+         values="0.5;1;0.5"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+ </path>
+</g>
+
+<g transform="matrix(1.1870440244674683, 0, 0, 1.1773099899291992, 600.0621337890625, 218.12452697753906)"
+style="transform-origin: 12px 12px;">
+ <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" style="fill: rgb(213, 213, 213);">
+     <animateTransform
+         attributeName="transform"
+         type="translate"
+         from="-5 0"
+         to="5 0"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+     <animate
+         attributeName="opacity"
+         values="0.5;1;0.5"
+         dur="1s"
+         repeatCount="indefinite"
+     />
+ </path>
+</g>
+    </svg>
