@@ -344,12 +344,8 @@ const LoginAlt = ({ onLogin }) => {
         let token = "dummy-token"; // Simulated token (can be removed if not needed)
         let role = null;
 
-        if (credentials.email === "prathab@gmail.com" && credentials.password === "123456789") {
+        if (credentials.email === "olive@gmail.com" && credentials.password === "123456789") {
             role = "SuperAdmin";
-        } else if (credentials.email === "admin@gmail.com" && credentials.password === "123456789") {
-            role = "Admin";
-        } else if (credentials.email === "user@gmail.com" && credentials.password === "123456789") {
-            role = "User";
         } else {
             throw new Error();
         }
