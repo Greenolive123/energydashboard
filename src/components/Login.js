@@ -370,9 +370,14 @@ const LoginAlt = ({ onLogin }) => {
         <div className="login-alt-header">
           <div className="login-alt-logo">
             <div className="logo-badge">
-              <Shield size={22} color='white'/>
+               <img
+            src="/Assets/elogoo.png"
+            alt="Olive IoT Logo"
+            className="h-8 md:h-10 flex-shrink-0"
+    
+          />
             </div>
-            <h1>Olive<span>IoT</span></h1>
+            <h1>Olive<span>&nbsp;Power Monitor</span></h1>
           </div>
           <h5>Intelligent Power and energy analytics</h5>
           <p>Sign in to your account to access the dashboard</p>

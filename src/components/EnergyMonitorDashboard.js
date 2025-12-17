@@ -1,775 +1,476 @@
-import { useState, useEffect } from "react";
-import Chart from "react-apexcharts";
-import { motion, AnimatePresence } from 'framer-motion';
-export default function EnergyMonitorDashboard() {
-  // Sample data for dashboard
-  const [data, setData] = useState({
-    summary: {
-      totalActivePower: 85.7,
-      totalPowerFactor: 0.92,
-      averageVoltage: 230.5,
-      averageCurrent: 124.3,
-    },
-    phases: {
-      R: {
-        voltage: 232.1,
-        current: 125.7,
-        powerConsumption: 29.2,
-        powerFactor: 0.94,
-        apparentPower: 31.1,
-        reactivePower: 10.5,
-        status: "Good"
-      },
-      Y: {
-        voltage: 228.7,
-        current: 138.2,
-        powerConsumption: 31.6,
-        powerFactor: 0.79,
-        apparentPower: 40.0,
-        reactivePower: 24.3,
-        status: "Low"
-      },
-      B: {
-        voltage: 230.8,
-        current: 109.1,
-        powerConsumption: 24.9,
-        powerFactor: 0.88,
-        apparentPower: 28.3,
-        reactivePower: 13.4,
-        status: "Fair"
-      }
-    },
-    alerts: [
-      {
-        title: "Unbalanced Load Detected in Y Phase",
-        description: "Current consumption 26% above average. Investigate potential unauthorized connection."
-      },
-      {
-        title: "kWh-kVAh Mismatch",
-        description: "Variance of 8.2% detected between active and apparent energy consumption."
-      }
-    ],
-    tips: [
-      {
-        title: "Install Capacitors for Y Phase",
-        description: "Power factor (0.79) is below optimal level. Installing power factor correction capacitors can improve efficiency."
-      },
-      {
-        title: "Load Balancing Recommended",
-        description: "Redistribute loads more evenly across all three phases to improve system efficiency."
-      },
-      {
-        title: "Schedule Heavy Loads for Off-Peak Hours",
-        description: "Running high-power equipment during off-peak hours can reduce energy costs by 15-20%."
-      }
-    ]
-  });
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
+import { Zap, Sun, Wind, Battery, TrendingUp, TrendingDown, Leaf, DollarSign, AlertCircle, Activity, Power, Clock, Award, Download, Filter, Calendar } from 'lucide-react';
 
-  // Chart data
-  const timeLabels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-  const kwhData = [42, 45, 40, 38, 55, 65, 75, 85, 78, 88, 70, 58];
-  const kvahData = [48, 50, 45, 42, 60, 72, 82, 93, 85, 95, 78, 65];
-  const kvarhData = [20, 22, 18, 15, 25, 30, 35, 42, 38, 40, 32, 28];
+const ProfessionalEnergyDashboard = () => {
+  const [timeRange, setTimeRange] = useState('today');
+  const [currentPower, setCurrentPower] = useState(2847);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+  useEffect(() => {
+    const powerInterval = setInterval(() => {
+      setCurrentPower(prev => Math.max(2400, Math.min(3200, prev + (Math.random() - 0.5) * 80)));
+    }, 2000);
+    
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(powerInterval);
+      clearInterval(timeInterval);
+    };
+  }, []);
+
+  const summary = {
+    totalGenerated: 3847,
+    totalConsumed: 3600,
+    netEnergy: 247,
+    monthlySavings: 3800,
+    powerFactor: 0.92,
+    frequency: 50.02,
+    carbonAvoided: 24.7,
+    treesEquivalent: 412,
+    carbonCredits: 1247
   };
 
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: 'spring',
-        damping: 12,
-        stiffness: 100
-      }
-    }
-  };
-
-  const cardHoverVariants = {
-    hover: {
-      scale: 1.03,
-      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-
-  const alertVariants = {
-    initial: { opacity: 0, x: -10 },
-    animate: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: 10 }
-  };
-  // Line chart options
-  const lineChartOptions = {
-    chart: {
-      height: 250,
-      type: 'line',
-      toolbar: {
-        show: false
-      },
-      animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 800
-      }
-    },
-    stroke: {
-      width: 3,
-      curve: 'smooth'
-    },
-    xaxis: {
-      categories: timeLabels
-    },
-    tooltip: {
-      y: {
-        formatter: function(value) {
-          return value + ' units';
-        }
-      }
-    },
-    legend: {
-      position: 'top'
-    },
-    markers: {
-      size: 4
-    },
-    grid: {
-      borderColor: '#f1f1f1',
-      row: {
-        colors: ['#f3f4f6', 'transparent'],
-        opacity: 0.5
-      }
-    }
-  };
-
-  const lineChartSeries = [
-    {
-      name: 'Active Energy (kWh)',
-      data: kwhData,
-      color: '#3182ce'
-    },
-    {
-      name: 'Apparent Energy (kVAh)',
-      data: kvahData,
-      color: '#e53e3e'
-    },
-    {
-      name: 'Reactive Energy (kVARh)',
-      data: kvarhData,
-      color: '#d69e2e'
-    }
+  const energyMix = [
+    { name: 'Solar', value: 45, color: '#F59E0B', kWh: 1731 },
+    { name: 'Wind', value: 28, color: '#3B82F6', kWh: 1077 },
+    { name: 'Grid', value: 18, color: '#8B5CF6', kWh: 692 },
+    { name: 'Battery', value: 9, color: '#10B981', kWh: 346 }
   ];
 
-  // Bar chart options
-  const barChartOptions = {
-    chart: {
-      height: 250,
-      type: 'bar',
-      toolbar: {
-        show: false
-      },
-      animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 800
-      }
-    },
-    plotOptions: {
-      bar: {
-        distributed: true,
-        borderRadius: 8,
-        dataLabels: {
-          position: 'top'
-        }
-      }
-    },
-    colors: ['#e53e3e', '#d69e2e', '#3182ce'],
-    dataLabels: {
-      enabled: true,
-      formatter: function(val) {
-        return val + ' kW';
-      },
-      offsetY: -20,
-      style: {
-        fontSize: '12px',
-        colors: ["#304758"]
-      }
-    },
-    xaxis: {
-      categories: ['R Phase', 'Y Phase', 'B Phase'],
-      position: 'bottom',
-      axisBorder: {
-        show: false
-      },
-      axisTicks: {
-        show: false
-      }
-    },
-    yaxis: {
-      axisBorder: {
-        show: false
-      },
-      axisTicks: {
-        show: false
-      },
-      labels: {
-        show: true,
-        formatter: function(val) {
-          return val + ' kW';
-        }
-      }
-    }
+  const facilities = [
+    { name: 'Factory 1 - Production', consumption: 1245, efficiency: 'High', status: 'Online', cost: '$2,847', percentage: 35 },
+    { name: 'Factory 2 - Assembly', consumption: 987, efficiency: 'High', status: 'Online', cost: '$2,256', percentage: 27 },
+    { name: 'Office HQ', consumption: 456, efficiency: 'Medium', status: 'Online', cost: '$1,043', percentage: 13 },
+    { name: 'Warehouse', consumption: 678, efficiency: 'Medium', status: 'Online', cost: '$1,550', percentage: 19 },
+    { name: 'EV Charging Station', consumption: 234, efficiency: 'Low', status: 'Idle', cost: '$535', percentage: 6 }
+  ];
+
+  const hourlyData = [
+    { hour: '00:00', consumption: 2100, generation: 0, cost: 180 },
+    { hour: '04:00', consumption: 1800, generation: 0, cost: 160 },
+    { hour: '08:00', consumption: 2900, generation: 1200, cost: 140 },
+    { hour: '12:00', consumption: 3400, generation: 3800, cost: 90 },
+    { hour: '16:00', consumption: 3100, generation: 2400, cost: 120 },
+    { hour: '20:00', consumption: 2600, generation: 400, cost: 200 },
+    { hour: '24:00', consumption: 2300, generation: 0, cost: 190 }
+  ];
+
+  const forecastData = [
+    { time: 'Now', actual: 2847, predicted: null },
+    { time: '+2h', actual: 3100, predicted: null },
+    { time: '+4h', actual: 3350, predicted: null },
+    { time: '+6h', actual: null, predicted: 3200 },
+    { time: '+8h', actual: null, predicted: 2900 },
+    { time: '+10h', actual: null, predicted: 2650 },
+    { time: '+12h', actual: null, predicted: 2400 }
+  ];
+
+  const alerts = [
+    { id: 1, title: 'Solar Efficiency Alert', message: 'Panel efficiency dropped 8%. Check for dust or shading.', severity: 'warning', time: '15 min ago' },
+    { id: 2, title: 'Peak Optimization Success', message: 'Battery discharge during peak hours saved $247 today.', severity: 'success', time: '1 hour ago' },
+    { id: 3, title: 'High Demand Forecast', message: 'Predicted peak at 2-4 PM tomorrow. Pre-charge batteries.', severity: 'info', time: '2 hours ago' }
+  ];
+
+  const getEfficiencyColor = (efficiency) => {
+    if (efficiency === 'High') return 'bg-green-50 text-green-700 border-green-200';
+    if (efficiency === 'Medium') return 'bg-amber-50 text-amber-700 border-amber-200';
+    return 'bg-red-50 text-red-700 border-red-200';
   };
 
-  const barChartSeries = [{
-    name: 'Power Consumption (kW)',
-    data: [data.phases.R.powerConsumption, data.phases.Y.powerConsumption, data.phases.B.powerConsumption],
-  }];
-
-  // Helper function to get badge color
-  const getBadgeColor = (status) => {
-    switch(status) {
-      case "Good": return "bg-green-100 text-green-800";
-      case "Fair": return "bg-yellow-100 text-yellow-800";
-      case "Low": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  // Refresh data function
-  const refreshData = () => {
-    // In a real application, this would fetch new data from an API
-    console.log("Refreshing data...");
-    // Mock data update
-    setData(prevData => ({
-      ...prevData,
-      summary: {
-        ...prevData.summary,
-        totalActivePower: (prevData.summary.totalActivePower + (Math.random() * 2 - 1)).toFixed(1),
-      }
-    }));
+  const getSeverityStyle = (severity) => {
+    if (severity === 'warning') return 'border-l-4 border-amber-400 bg-amber-50';
+    if (severity === 'success') return 'border-l-4 border-green-400 bg-green-50';
+    return 'border-l-4 border-blue-400 bg-blue-50';
   };
 
   return (
-    <div className="bg-gray-100 p-6">
-    <div className="container-fluid mx-auto">
-      {/* Summary Cards with Animation */}
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover="hover"
-          variants={cardHoverVariants}
-        >
-          <div className="flex items-center mb-2">
-            <motion.div 
-              className="rounded-full bg-red-100 p-3 mr-4"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </motion.div>
-            <div>
-              <p className="text-sm text-gray-500">Total Active Power</p>
-              <motion.h2 
-                className="text-2xl font-bold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {data.summary.totalActivePower} kW
-              </motion.h2>
-            </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-[1920px] mx-auto px-6 py-6">
+        {/* Professional Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">Energy Management Dashboard</h1>
+            <p className="text-sm text-gray-500 flex items-center gap-2">
+              <Clock size={14} />
+              Last updated: {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            </p>
           </div>
-          <div className="text-sm text-gray-500">
-            <span className="text-green-500">+3.2%</span> from yesterday
-          </div>
-        </motion.div>
-        
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover="hover"
-          variants={cardHoverVariants}
-        >
-          <div className="flex items-center mb-2">
-            <motion.div 
-              className="rounded-full bg-blue-100 p-3 mr-4"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            </motion.div>
-            <div>
-              <p className="text-sm text-gray-500">Total Power Factor</p>
-              <motion.h2 
-                className="text-2xl font-bold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {data.summary.totalPowerFactor}
-              </motion.h2>
-            </div>
-          </div>
-          <div className="text-sm text-gray-500">
-            <span className="text-green-500">+0.05</span> from yesterday
-          </div>
-        </motion.div>
-        
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover="hover"
-          variants={cardHoverVariants}
-        >
-          <div className="flex items-center mb-2">
-            <motion.div 
-              className="rounded-full bg-yellow-100 p-3 mr-4"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
-            </motion.div>
-            <div>
-              <p className="text-sm text-gray-500">Average Voltage</p>
-              <motion.h2 
-                className="text-2xl font-bold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {data.summary.averageVoltage} V
-              </motion.h2>
-            </div>
-          </div>
-          <div className="text-sm text-gray-500">
-            <span className="text-red-500">-1.2%</span> from yesterday
-          </div>
-        </motion.div>
-        
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover="hover"
-          variants={cardHoverVariants}
-        >
-          <div className="flex items-center mb-2">
-            <motion.div 
-              className="rounded-full bg-green-100 p-3 mr-4"
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </motion.div>
-            <div>
-              <p className="text-sm text-gray-500">Average Current</p>
-              <motion.h2 
-                className="text-2xl font-bold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {data.summary.averageCurrent} A
-              </motion.h2>
-            </div>
-          </div>
-          <div className="text-sm text-gray-500">
-            <span className="text-green-500">+2.8%</span> from yesterday
-          </div>
-        </motion.div>
-      </motion.div>
-
-      {/* Main Content - Phase Monitoring */}
-      <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 0.2 }}
-      >
-        {/* R Phase */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover={{ boxShadow: "0px 10px 30px rgba(249, 115, 22, 0.2)" }}
-        >
-          <h3 className="text-lg font-bold mb-4 text-red-600">R Phase</h3>
-          <motion.div 
-            className="space-y-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
-            <div className="flex justify-between">
-              <span className="text-gray-600">Voltage</span>
-              <span className="font-semibold">{data.phases.R.voltage} V</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Current</span>
-              <span className="font-semibold">{data.phases.R.current} A</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Consumption</span>
-              <span className="font-semibold">{data.phases.R.powerConsumption} kW</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Factor</span>
-              <span className="font-semibold">
-                {data.phases.R.powerFactor} 
-                <motion.span 
-                  className={`ml-2 px-2 py-1 rounded-full text-xs ${getBadgeColor(data.phases.R.status)}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, delay: 0.5 }}
-                >
-                  {data.phases.R.status}
-                </motion.span>
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Apparent Power</span>
-              <span className="font-semibold">{data.phases.R.apparentPower} kVA</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Reactive Power</span>
-              <span className="font-semibold">{data.phases.R.reactivePower} kVAR</span>
-            </div>
-          </motion.div>
-        </motion.div>
-        
-        {/* Y Phase */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover={{ boxShadow: "0px 10px 30px rgba(234, 179, 8, 0.2)" }}
-        >
-          <h3 className="text-lg font-bold mb-4 text-yellow-600">Y Phase</h3>
-          <motion.div 
-            className="space-y-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-          >
-            <div className="flex justify-between">
-              <span className="text-gray-600">Voltage</span>
-              <span className="font-semibold">{data.phases.Y.voltage} V</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Current</span>
-              <span className="font-semibold">{data.phases.Y.current} A</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Consumption</span>
-              <span className="font-semibold">{data.phases.Y.powerConsumption} kW</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Factor</span>
-              <span className="font-semibold">
-                {data.phases.Y.powerFactor} 
-                <motion.span 
-                  className={`ml-2 px-2 py-1 rounded-full text-xs ${getBadgeColor(data.phases.Y.status)}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, delay: 0.5 }}
-                >
-                  {data.phases.Y.status}
-                </motion.span>
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Apparent Power</span>
-              <span className="font-semibold">{data.phases.Y.apparentPower} kVA</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Reactive Power</span>
-              <span className="font-semibold">{data.phases.Y.reactivePower} kVAR</span>
-            </div>
-          </motion.div>
-        </motion.div>
-        
-        {/* B Phase */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          variants={itemVariants}
-          whileHover={{ boxShadow: "0px 10px 30px rgba(59, 130, 246, 0.2)" }}
-        >
-          <h3 className="text-lg font-bold mb-4 text-blue-600">B Phase</h3>
-          <motion.div 
-            className="space-y-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <div className="flex justify-between">
-              <span className="text-gray-600">Voltage</span>
-              <span className="font-semibold">{data.phases.B.voltage} V</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Current</span>
-              <span className="font-semibold">{data.phases.B.current} A</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Consumption</span>
-              <span className="font-semibold">{data.phases.B.powerConsumption} kW</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Power Factor</span>
-              <span className="font-semibold">
-                {data.phases.B.powerFactor} 
-                <motion.span 
-                  className={`ml-2 px-2 py-1 rounded-full text-xs ${getBadgeColor(data.phases.B.status)}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500, delay: 0.5 }}
-                >
-                  {data.phases.B.status}
-                </motion.span>
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Apparent Power</span>
-              <span className="font-semibold">{data.phases.B.apparentPower} kVA</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Reactive Power</span>
-              <span className="font-semibold">{data.phases.B.reactivePower} kVAR</span>
-            </div>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-      
-      {/* Theft Detection and Tips */}
-      <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        transition={{ delay: 0.4 }}
-      >
-        {/* Theft Detection Panel */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6 border-l-4 border-red-500"
-          variants={itemVariants}
-          whileHover={{ boxShadow: "0px 10px 30px rgba(239, 68, 68, 0.2)" }}
-        >
-          <h3 className="text-lg font-bold mb-4 flex items-center">
-            <motion.svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 mr-2 text-red-500" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-              initial={{ rotate: 0 }}
-              animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity, 
-                repeatDelay: 3
-              }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </motion.svg>
-            Theft Detection
-          </h3>
-          <div className="space-y-4">
-            <AnimatePresence>
-              {data.alerts.map((alert, index) => (
-                <motion.div 
-                  key={index} 
-                  className="bg-red-100 p-4 rounded-lg"
-                  variants={alertVariants}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <div className="font-semibold text-red-700 mb-1">{alert.title}</div>
-                  <p className="text-red-600 text-sm">{alert.description}</p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-            <motion.button 
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg w-full mt-2"
-              onClick={() => alert("Generating security report...")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Generate Security Report
-            </motion.button>
-          </div>
-        </motion.div>
-        
-        {/* Energy-Saving Tips */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500"
-          variants={itemVariants}
-          whileHover={{ boxShadow: "0px 10px 30px rgba(59, 130, 246, 0.2)" }}
-        >
-          <h3 className="text-lg font-bold mb-4 flex items-center">
-            <motion.svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6 mr-2 text-blue-500" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-              animate={{ rotate: 360 }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                ease: "linear" 
-              }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </motion.svg>
-            Energy-Saving Tips
-          </h3>
-          <div className="space-y-4">
-            <AnimatePresence>
-              {data.tips.map((tip, index) => (
-                <motion.div 
-                  key={index} 
-                  className="bg-blue-100 p-4 rounded-lg"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + (index * 0.2) }}
-                >
-                  <div className="font-semibold text-blue-700 mb-1">{tip.title}</div>
-                  <p className="text-blue-600 text-sm">{tip.description}</p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      </motion.div>
-      
-      {/* Charts Section */}
-      <motion.div 
-        className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-      >
-        {/* Line Chart */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          whileHover={{ boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)" }}
-        >
-          <h3 className="text-lg font-bold mb-4">Energy Consumption Over Time</h3>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            <Chart 
-              options={lineChartOptions}
-              series={lineChartSeries}
-              type="line"
-              height={250}
-            />
-          </motion.div>
-        </motion.div>
-        
-        {/* Bar Chart */}
-        <motion.div 
-          className="bg-white rounded-lg shadow p-6"
-          whileHover={{ boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)" }}
-        >
-          <h3 className="text-lg font-bold mb-4">Phase-wise Power Consumption</h3>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9 }}
-          >
-            <Chart 
-              options={barChartOptions}
-              series={barChartSeries}
-              type="bar"
-              height={250}
-            />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-      
-      {/* Footer */}
-      <motion.footer 
-        className="bg-white p-6 rounded-lg shadow mt-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-      >
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-gray-600 mb-4 md:mb-0">
-            &copy; 2025 Energy Monitor System | Last updated: April 11, 2025 11:23 AM
-          </div>
-          <div className="flex space-x-4">
-            <motion.button 
-              onClick={() => alert("Downloading report...")} 
-              className="text-blue-500 hover:text-blue-700"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Download Report
-            </motion.button>
-            <motion.button 
-              onClick={() => alert("Opening user manual...")} 
-              className="text-blue-500 hover:text-blue-700"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              User Manual
-            </motion.button>
-            <motion.button 
-              onClick={() => alert("Contacting support...")} 
-              className="text-blue-500 hover:text-blue-700"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              Contact Support
-            </motion.button>
+          <div className="flex items-center gap-3">
+            <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+              <Calendar size={16} />
+              {timeRange === 'today' ? 'Today' : timeRange}
+            </button>
+            <button className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+              <Filter size={16} />
+              Filter
+            </button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 flex items-center gap-2">
+              <Download size={16} />
+              Export Report
+            </button>
           </div>
         </div>
-      </motion.footer>
-      
-      {/* Refresh Button - Floating */}
-      <motion.button 
-        onClick={refreshData}
-        className="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg flex items-center justify-center"
-        whileHover={{ scale: 1.1, rotate: 180 }}
-        whileTap={{ scale: 0.9 }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-        </svg>
-      </motion.button>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-amber-100 rounded-lg">
+                <Sun size={20} className="text-amber-600" />
+              </div>
+              <div className="flex items-center gap-1 px-2 py-1 bg-green-50 rounded text-xs font-semibold text-green-700">
+                <TrendingUp size={12} />
+                +12%
+              </div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 mb-1">Total Generated</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">{summary.totalGenerated.toLocaleString()} kWh</p>
+            <p className="text-xs text-gray-500">vs yesterday</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Zap size={20} className="text-blue-600" />
+              </div>
+              <div className="flex items-center gap-1 px-2 py-1 bg-red-50 rounded text-xs font-semibold text-red-700">
+                <TrendingDown size={12} />
+                -5%
+              </div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 mb-1">Total Consumed</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">{summary.totalConsumed.toLocaleString()} kWh</p>
+            <p className="text-xs text-gray-500">vs yesterday</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Battery size={20} className="text-green-600" />
+              </div>
+              <div className="px-2 py-1 bg-green-50 rounded text-xs font-semibold text-green-700">
+                Surplus
+              </div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 mb-1">Net Energy</p>
+            <p className="text-2xl font-bold text-green-600 mb-1">+{summary.netEnergy} kWh</p>
+            <p className="text-xs text-gray-500">Available storage</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <DollarSign size={20} className="text-purple-600" />
+              </div>
+              <div className="flex items-center gap-1 px-2 py-1 bg-purple-50 rounded text-xs font-semibold text-purple-700">
+                <TrendingUp size={12} />
+                +18%
+              </div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 mb-1">Monthly Savings</p>
+            <p className="text-2xl font-bold text-gray-900 mb-1">${summary.monthlySavings.toLocaleString()}</p>
+            <p className="text-xs text-gray-500">vs grid-only cost</p>
+          </div>
+
+          <div className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow relative overflow-hidden">
+            <div className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded-full text-xs font-bold">
+              +25%
+            </div>
+            <div className="flex justify-between items-start mb-3">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <Award size={20} className="text-green-600" />
+              </div>
+            </div>
+            <p className="text-xs font-medium text-gray-500 mb-1">Carbon Credits</p>
+            <p className="text-2xl font-bold text-green-600 mb-1">{summary.carbonCredits.toLocaleString()}</p>
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <Leaf size={12} />
+              {summary.carbonAvoided} tons CO₂ avoided
+            </p>
+            <div className="w-full bg-gray-100 rounded-full h-1.5 mt-3">
+              <div className="bg-green-600 h-full rounded-full" style={{width: '85%'}}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Live Power Monitor */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <Activity className="text-blue-600" size={20} />
+              Live Power Monitor
+            </h3>
+            <div className="flex flex-col items-center py-6">
+              <div className="relative mb-8">
+                <svg className="w-48 h-48 transform -rotate-90">
+                  <circle cx="96" cy="96" r="88" stroke="#f3f4f6" strokeWidth="8" fill="none" />
+                  <circle 
+                    cx="96" cy="96" r="88" 
+                    stroke="#3B82F6" 
+                    strokeWidth="8" 
+                    fill="none"
+                    strokeDasharray={`${(currentPower / 4000) * 553} 553`}
+                    strokeLinecap="round"
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <p className="text-4xl font-bold text-gray-900">{Math.round(currentPower)}</p>
+                  <p className="text-sm font-medium text-gray-500">kW</p>
+                </div>
+              </div>
+              <div className="w-full space-y-3">
+                <div className="flex justify-between items-center p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <div className="flex items-center gap-2">
+                    <Sun size={16} className="text-amber-600" />
+                    <span className="text-sm font-medium text-gray-700">Solar Output</span>
+                  </div>
+                  <span className="font-bold text-gray-900">1,245 kW</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-2">
+                    <Battery size={16} className="text-green-600" />
+                    <span className="text-sm font-medium text-gray-700">Battery Status</span>
+                  </div>
+                  <span className="font-bold text-gray-900">78% • 245 kWh</span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="flex items-center gap-2">
+                    <Power size={16} className="text-purple-600" />
+                    <span className="text-sm font-medium text-gray-700">Grid Import</span>
+                  </div>
+                  <span className="font-bold text-gray-900">520 kW</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Energy Source Distribution */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Energy Source Distribution</h3>
+            <ResponsiveContainer width="100%" height={240}>
+              <PieChart>
+                <Pie
+                  data={energyMix}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={65}
+                  outerRadius={85}
+                  paddingAngle={4}
+                  dataKey="value"
+                >
+                  {energyMix.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              {energyMix.map((source, idx) => (
+                <div key={idx} className="p-3 rounded-lg border" style={{backgroundColor: source.color + '10', borderColor: source.color + '40'}}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-3 h-3 rounded-full" style={{backgroundColor: source.color}}></div>
+                    <span className="text-xs font-medium text-gray-700">{source.name}</span>
+                  </div>
+                  <p className="text-xl font-bold text-gray-900">{source.value}%</p>
+                  <p className="text-xs text-gray-500">{source.kWh} kWh</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Environmental Impact */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <Leaf className="text-green-600" size={20} />
+              Environmental Impact
+            </h3>
+            <div className="text-center py-6">
+              <div className="inline-flex items-center justify-center w-32 h-32 bg-green-50 rounded-full border-2 border-green-200 mb-4">
+                <div>
+                  <p className="text-4xl font-bold text-green-600">{summary.carbonAvoided}</p>
+                  <p className="text-xs font-medium text-gray-500">tons CO₂</p>
+                </div>
+              </div>
+              <p className="text-sm font-medium text-gray-600 mb-6">Carbon emissions avoided this month</p>
+              <div className="w-full h-2 bg-gray-100 rounded-full mb-2">
+                <div className="h-full bg-green-600 rounded-full" style={{width: '76%'}}></div>
+              </div>
+              <p className="text-xs font-medium text-gray-500 mb-6">76% towards annual sustainability goal</p>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                  <p className="text-2xl font-bold text-green-600">89%</p>
+                  <p className="text-xs font-medium text-gray-600">Renewable Energy</p>
+                </div>
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-2xl font-bold text-blue-600">{summary.treesEquivalent}</p>
+                  <p className="text-xs font-medium text-gray-600">Trees Planted</p>
+                </div>
+              </div>
+              <button className="w-full p-3 bg-green-50 rounded-lg border border-green-200 hover:bg-green-100 transition-colors">
+                <p className="text-sm font-semibold text-green-700 flex items-center justify-center gap-2">
+                  <Award size={16} />
+                  {summary.carbonCredits.toLocaleString()} Credits Earned
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Facility Consumption Table */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow mb-8">
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Facility Energy Consumption</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Facility</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Consumption</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Usage %</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Efficiency</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Status</th>
+                  <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">Cost</th>
+                </tr>
+              </thead>
+              <tbody>
+                {facilities.map((facility, idx) => (
+                  <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                        <span className="font-medium text-gray-900">{facility.name}</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className="font-bold text-gray-900">{facility.consumption} kWh</span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-24 h-2 bg-gray-100 rounded-full">
+                          <div className="h-full bg-blue-600 rounded-full" style={{width: `${facility.percentage}%`}}></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">{facility.percentage}%</span>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getEfficiencyColor(facility.efficiency)}`}>
+                        {facility.efficiency}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        facility.status === 'Online' 
+                          ? 'bg-green-50 text-green-700 border border-green-200' 
+                          : 'bg-amber-50 text-amber-700 border border-amber-200'
+                      }`}>
+                        {facility.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 font-bold text-gray-900">{facility.cost}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Energy Flow */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-6">Energy Flow - 24 Hour View</h3>
+            <ResponsiveContainer width="100%" height={320}>
+              <AreaChart data={hourlyData}>
+                <defs>
+                  <linearGradient id="consumptionGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#EF4444" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="generationGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="hour" stroke="#6b7280" fontSize={12} />
+                <YAxis stroke="#6b7280" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Area type="monotone" dataKey="generation" stroke="#10B981" fill="url(#generationGrad)" strokeWidth={2} />
+                <Area type="monotone" dataKey="consumption" stroke="#EF4444" fill="url(#consumptionGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* AI Forecast */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <TrendingUp className="text-blue-600" size={20} />
+              AI Demand Forecast
+            </h3>
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={forecastData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis dataKey="time" stroke="#6b7280" fontSize={12} />
+                <YAxis stroke="#6b7280" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'white',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Line type="monotone" dataKey="actual" stroke="#3B82F6" strokeWidth={3} dot={{ fill: '#3B82F6', r: 4 }} />
+                <Line type="monotone" dataKey="predicted" stroke="#10B981" strokeWidth={3} strokeDasharray="5 5" dot={{ fill: '#10B981', r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm font-medium text-gray-700">
+                Forecast Confidence: <span className="font-bold text-blue-600">92%</span> • Peak expected at 2-4 PM tomorrow
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Alerts */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
+          <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <AlertCircle className="text-amber-600" size={20} />
+            System Alerts & Insights
+          </h3>
+          <div className="space-y-4">
+            {alerts.map((alert) => (
+              <div key={alert.id} className={`p-4 rounded-lg ${getSeverityStyle(alert.severity)}`}>
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-bold text-gray-900">{alert.title}</h4>
+                  <span className="text-xs font-medium text-gray-500">{alert.time}</span>
+                </div>
+                <p className="text-sm text-gray-700">{alert.message}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
   );
-}
+};
+
+export default ProfessionalEnergyDashboard;

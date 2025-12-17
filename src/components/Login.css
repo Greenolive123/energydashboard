@@ -72,14 +72,15 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #40c057, #2b8a3e);
     border-radius: 8px;
     margin-right: 10px;
     box-shadow: 0 4px 10px rgba(43, 138, 62, 0.2);
   }
+    .logo-badge img{
+      transform: scale(1.5);
+    }
   
   .light-theme .logo-badge {
-    background: linear-gradient(135deg, #40c057, #2b8a3e);
     box-shadow: 0 4px 10px rgba(43, 138, 62, 0.2);
   }
   
