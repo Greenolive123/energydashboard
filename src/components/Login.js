@@ -1,19 +1,14 @@
 import React, { useEffect, useRef,useState} from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Redirect after login
+
 import * as THREE from 'three';
 import './Login.css';
 
 import { 
   User, 
   Lock, 
-  Mail, 
   Eye, 
   EyeOff, 
-  ChevronRight, 
-  Shield, 
-  Clock,
-  ExternalLink
+  ChevronRight
 } from 'lucide-react';
 
 const LoginAlt = ({ onLogin }) => {
@@ -22,7 +17,6 @@ const LoginAlt = ({ onLogin }) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate(); // Redirect hook
     const threeContainerRef = useRef(null);
   
   useEffect(() => {
@@ -137,9 +131,7 @@ const LoginAlt = ({ onLogin }) => {
     // Create data connections (pipes) between machines and hub
     for (let i = 0; i < machines.length; i++) {
       const machine = machines[i];
-      
-      // Create a curved pipe from machine to hub
-      const curvePoints = [];
+
       
       // Start point (at machine)
       const startPoint = new THREE.Vector3(

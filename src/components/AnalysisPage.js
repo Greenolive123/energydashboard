@@ -20,11 +20,8 @@ import {
   BarChart3, 
   ArrowUp, 
   ArrowDown, 
-  Lightbulb,
-  Sun,
-  Wind,
-  Battery,
-  Plug
+  Lightbulb
+  
 } from 'lucide-react';
 
 const RATE_PER_UNIT = 0.15; // ₹ per kWh

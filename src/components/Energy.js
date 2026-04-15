@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 export default function EnergyMonitorDashboard({ onBack }) {
-  const navigate = useNavigate();
+
 
   // ==================== STATE ====================
   const [data, setData] = useState({

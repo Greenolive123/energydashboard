@@ -1,28 +1,14 @@
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
 import {
   Bell,
-  Filter,
   LogOut,
-  ChevronDown,
-  Map,
-  Download,
-  Eye,
   Menu,
-  Trash2,
-  MoreVertical,
-  CheckCircle,
-  XCircle,
-  Sliders,
   Search,
-  TrendingUp,
   Home,
-  AlertTriangle,
   BarChart3,
   FileText,
-  Brain,
-  X,
+  Brain
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Lazy-loaded components for code-splitting
@@ -352,8 +338,6 @@ const Sidebar = ({
 
 // Main component
 const SuperAdminDashboard = () => {
-  const navigate = useNavigate();
-
   // State management
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activePage, setActivePage] = useState('home');

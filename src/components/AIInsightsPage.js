@@ -235,7 +235,7 @@ const AIInsightsPage = () => {
     }
 
     const avgPower = filteredData.reduce((sum, r) => sum + r.power, 0) / filteredData.length;
-    const trend = Math.random() * 0.25 + 0.95; // slight variation based on data
+   
 
     return [
       { time: 'Now', historical: Math.round(avgPower), predicted: Math.round(avgPower * 1.04) },

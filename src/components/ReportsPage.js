@@ -4,16 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { 
   Download, 
   FileText, 
-  Filter, 
   Search, 
   Calendar, 
-  CheckCircle, 
-  TrendingUp, 
-  Activity, 
-  Zap, 
-  Shield, 
+  CheckCircle,
   Plus, 
-  Edit, 
   Trash2, 
   BarChart3 
 } from 'lucide-react';
