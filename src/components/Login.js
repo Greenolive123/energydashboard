@@ -420,7 +420,6 @@ const LoginAlt = ({ onLogin }) => {
               />
               <span>Remember me</span>
             </label>
-            <a href="#" className="forgot-option">Forgot password?</a>
           </div>
 
           <button type="submit" className="login-alt-button">
