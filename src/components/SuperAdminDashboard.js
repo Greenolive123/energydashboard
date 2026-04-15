@@ -27,11 +27,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Lazy-loaded components for code-splitting
 const DeviceDashboard = React.lazy(() => import('./DeviceDashboard'));
-const AlertsPage = React.lazy(() => import('./AlertsPage'));
 const AnalysisPage = React.lazy(() => import('./AnalysisPage'));
 const ReportsPage = React.lazy(() => import('./ReportsPage'));
 const AIInsightsPage = React.lazy(() => import('./AIInsightsPage'));
-const EnergyMonitorDashboard = React.lazy(() => import('./EnergyMonitorDashboard'));
 
 // Loading fallback component
 const LoadingSpinner = () => (
@@ -380,8 +378,6 @@ const SuperAdminDashboard = () => {
   const navItems = useMemo(
     () => [
       { id: 'home', label: 'Home', icon: Home, page: 'home' },
-      { id: 'device-dashboard', label: 'Device Dashboard', icon: TrendingUp, page: 'device-dashboard' },
-      { id: 'alerts', label: 'Alerts', icon: AlertTriangle, page: 'alerts' },
       { id: 'analysis', label: 'Analysis', icon: BarChart3, page: 'analysis' },
       { id: 'reports', label: 'Reports', icon: FileText, page: 'reports' },
       { id: 'ai-insights', label: 'AI Insights', icon: Brain, page: 'ai-insights' },
@@ -486,31 +482,10 @@ const SuperAdminDashboard = () => {
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <EnergyMonitorDashboard />
-                  </motion.div>
-                )}
-                {activePage === 'device-dashboard' && (
-                  <motion.div
-                    key="device-dashboard"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
                     <DeviceDashboard />
                   </motion.div>
                 )}
-                {activePage === 'alerts' && (
-                  <motion.div
-                    key="alerts"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <AlertsPage />
-                  </motion.div>
-                )}
+              
                 {activePage === 'analysis' && (
                   <motion.div
                     key="analysis"

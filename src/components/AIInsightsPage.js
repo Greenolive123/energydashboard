@@ -1,321 +1,497 @@
-// AIInsightsPage.js - Enhanced Modern AI Insights Component for Super Admin
-import React, { useState, useEffect } from 'react';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Zap, AlertTriangle, TrendingUp, Activity, Shield, Clock, Play, Pause } from 'lucide-react';
+"use client";
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  ResponsiveContainer, 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip 
+} from 'recharts';
+import { 
+  Brain, 
+  TrendingUp, 
+  AlertTriangle, 
+  Activity, 
+  Shield, 
+  Zap, 
+  Calendar, 
+  BarChart3, 
+  Download, 
+  Play, 
+  Pause, 
+  Clock 
+} from 'lucide-react';
+
+const energyMetersData = [
+  { id: 1, siteName: "Home 1", name: "Chennai", type: "Energy" },
+  { id: 2, siteName: "Home 2", name: "Coimbature", type: "Energy" },
+  { id: 3, siteName: "Home 3", name: "Kerala", type: "Energy" },
+  { id: 4, siteName: "Home 4", name: "bangalore", type: "Energy" },
+  { id: 5, siteName: "Home 5", name: "Visak", type: "Energy" },
+  { id: 6, siteName: "Home 6", name: "pune", type: "Energy" }
+];
 
 const AIInsightsPage = () => {
-  const [insights, setInsights] = useState([
-    { 
-      id: 1, 
-      type: 'prediction', 
-      text: 'Predicted 15% demand spike at 6 PM today - Recommend initiating battery discharge to save $45 in peak tariffs', 
-      confidence: 92, 
-      timestamp: '2025-12-17 14:30', 
-      actions: ['Initiate Discharge', 'Schedule Alert'] 
-    },
-    { 
-      id: 2, 
-      type: 'anomaly', 
-      text: 'Anomaly detected in Y Phase: 8% efficiency drop likely due to incoming weather front - Auto-adjust loads for stability', 
-      confidence: 87, 
-      timestamp: '2025-12-17 13:45', 
-      actions: ['Auto-Adjust Loads', 'Notify Team'] 
-    },
-    { 
-      id: 3, 
-      type: 'optimization', 
-      text: 'Optimize HVAC in Factory 2: Predictive cooling algorithm suggests 12% energy reduction by pre-cooling zones', 
-      confidence: 95, 
-      timestamp: '2025-12-17 12:20', 
-      actions: ['Apply Optimization', 'Simulate Impact'] 
-    },
-    { 
-      id: 4, 
-      type: 'maintenance', 
-      text: 'Predictive maintenance alert: Inverter C shows 22% wear - Schedule inspection within 48 hours to prevent downtime', 
-      confidence: 89, 
-      timestamp: '2025-12-17 11:15', 
-      actions: ['Schedule Inspection', 'Order Parts'] 
-    },
-    { 
-      id: 5, 
-      type: 'efficiency', 
-      text: 'Solar Array 1 efficiency trending +3% above baseline - Continue current cleaning schedule for sustained gains', 
-      confidence: 91, 
-      timestamp: '2025-12-17 10:00', 
-      actions: ['Monitor Trend', 'Expand to Array 2'] 
-    }
-  ]);
+  const [energyReadings, setEnergyReadings] = useState([]);
   const [liveMode, setLiveMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  const [selectedMeter, setSelectedMeter] = useState('all');
+  const [dateRange, setDateRange] = useState({ from: '2025-12-01', to: '2025-12-31' });
 
-  // Simulate AI generating new insights
+  // Generate realistic master dataset once
+  const generateMasterData = () => {
+    const data = [];
+    const startDate = new Date('2025-12-01');
+    let id = 1;
+
+    for (let day = 0; day < 30; day++) {
+      const currentDay = new Date(startDate);
+      currentDay.setDate(currentDay.getDate() + day);
+
+      for (let meterId = 1; meterId <= 6; meterId++) {
+        for (let hour = 0; hour < 24; hour += 2) { // 12 readings per day
+          const timestamp = new Date(currentDay);
+          timestamp.setHours(hour, Math.floor(Math.random() * 60));
+
+          let power = 1.8 + Math.random() * 4.5;
+
+          // Meter-specific patterns
+          if (meterId === 1 || meterId === 5) { // Solar
+            if (hour >= 6 && hour <= 18) power += 4 + Math.random() * 5;
+            else power *= 0.3;
+          } else if (meterId === 2) { // Wind - fluctuating
+            power += (Math.random() * 7 - 3.5);
+          } else if (meterId === 3 || meterId === 6) { // Battery - stable
+            power = 1.2 + Math.random() * 1.8;
+          } else if (meterId === 4) { // Factory / Inverter - evening heavy
+            if (hour >= 16 && hour <= 22) power += 5 + Math.random() * 3;
+          }
+
+          power = Math.max(0.4, parseFloat(power.toFixed(1)));
+
+          data.push({
+            id: id++,
+            meterId,
+            timestamp: timestamp.toISOString(),
+            power,
+            voltage: parseFloat((220 + Math.random() * 22).toFixed(1)),
+            current: parseFloat((power * 4.5 + Math.random() * 6).toFixed(1))
+          });
+        }
+      }
+    }
+    return data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  };
+
+  // Load / initialize data
+  useEffect(() => {
+    const saved = localStorage.getItem('aiEnergyReadings');
+    if (saved) {
+      setEnergyReadings(JSON.parse(saved));
+    } else {
+      const master = generateMasterData();
+      setEnergyReadings(master);
+      localStorage.setItem('aiEnergyReadings', JSON.stringify(master));
+    }
+  }, []);
+
+  // Live mode - append real new readings
   useEffect(() => {
     if (!liveMode) return;
+
     const interval = setInterval(() => {
-      setIsLoading(true);
-      setTimeout(() => {
-        const newInsight = {
-          id: Date.now(),
-          type: ['prediction', 'anomaly', 'optimization', 'maintenance', 'efficiency'][Math.floor(Math.random() * 5)],
-          text: generateRandomInsight(),
-          confidence: Math.floor(Math.random() * 15) + 85,
-          timestamp: new Date().toLocaleString('en-US', { 
-            year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-          }),
-          actions: ['Action 1', 'Action 2']
-        };
-        setInsights(prev => [newInsight, ...prev.slice(0, 9)]); // Keep top 10
-        setIsLoading(false);
-      }, 1500);
-    }, 15000); // Every 15 seconds
+      const now = new Date();
+      const meterId = selectedMeter === 'all' 
+        ? Math.floor(Math.random() * 6) + 1 
+        : parseInt(selectedMeter);
+
+      const basePower = selectedMeter === 'all' ? 3.5 : 4.2;
+      const livePower = parseFloat((basePower + (Math.random() * 3 - 1.5)).toFixed(1));
+
+      const newReading = {
+        id: Date.now(),
+        meterId,
+        timestamp: now.toISOString(),
+        power: livePower,
+        voltage: parseFloat((225 + Math.random() * 15).toFixed(1)),
+        current: parseFloat((livePower * 5).toFixed(1))
+      };
+
+      setEnergyReadings(prev => {
+        const updated = [...prev, newReading];
+        localStorage.setItem('aiEnergyReadings', JSON.stringify(updated));
+        return updated;
+      });
+    }, 7000);
+
     return () => clearInterval(interval);
-  }, [liveMode]);
+  }, [liveMode, selectedMeter]);
 
-  const generateRandomInsight = () => {
-    const templates = [
-      'Predicted {percent}% demand spike in {time} - Recommend {action} to save ${savings}',
-      'Anomaly in {component}: {percent}% {metric} drop - {recommendation}',
-      'Optimize {system}: {percent}% energy reduction via {method}',
-      'Predictive maintenance for {device}: {percent}% wear detected - {action}',
-      '{asset} efficiency trending {trend} - {recommendation}'
+  // Filtered data (used for all calculations)
+  const filteredData = useMemo(() => {
+    if (!energyReadings.length) return [];
+
+    const from = new Date(dateRange.from + 'T00:00:00');
+    const to = new Date(dateRange.to + 'T23:59:59');
+
+    return energyReadings.filter(r => {
+      const ts = new Date(r.timestamp);
+      const meterMatch = selectedMeter === 'all' || r.meterId === parseInt(selectedMeter);
+      return meterMatch && ts >= from && ts <= to;
+    });
+  }, [energyReadings, selectedMeter, dateRange]);
+
+  // Dynamic AI insights generator
+  const generateInsights = (data, meterDisplayName) => {
+    if (!data.length) return [];
+
+    const sorted = [...data].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    const powers = sorted.map(d => d.power);
+    const avgPower = powers.reduce((a, b) => a + b, 0) / powers.length;
+
+    const maxIdx = powers.indexOf(Math.max(...powers));
+    const peak = sorted[maxIdx];
+    const peakHour = new Date(peak.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+
+    const insightsList = [];
+
+    // 1. Peak prediction
+    insightsList.push({
+      id: Date.now() + 10,
+      type: 'prediction',
+      text: `Peak demand at ${peakHour} (${peak.power} kW). Load shifting recommended to avoid grid strain.`,
+      confidence: 91,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    });
+
+    // 2. Anomaly detection
+    const anomalies = sorted.filter(d => Math.abs(d.power - avgPower) > avgPower * 0.45);
+    if (anomalies.length > 0) {
+      insightsList.push({
+        id: Date.now() + 20,
+        type: 'anomaly',
+        text: `${anomalies.length} power anomalies detected in ${meterDisplayName}. Highest spike: +${Math.max(...anomalies.map(a => Math.abs(a.power - avgPower))).toFixed(1)} kW`,
+        confidence: 84,
+        timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      });
+    }
+
+    // 3. Trend / efficiency
+    const mid = Math.floor(sorted.length / 2);
+    const firstAvg = powers.slice(0, mid).reduce((a, b) => a + b, 0) / mid;
+    const secondAvg = powers.slice(mid).reduce((a, b) => a + b, 0) / (powers.length - mid);
+    const trend = secondAvg > firstAvg ? 'rising' : 'falling';
+    insightsList.push({
+      id: Date.now() + 30,
+      type: 'efficiency',
+      text: `Demand trend is ${trend} by ${(Math.abs(((secondAvg - firstAvg) / firstAvg) * 100)).toFixed(0)}% over selected period.`,
+      confidence: 78,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    });
+
+    // 4. Optimization
+    insightsList.push({
+      id: Date.now() + 40,
+      type: 'optimization',
+      text: `AI suggests shifting ${Math.round(Math.random() * 15 + 8)}% of evening load to solar hours. Estimated savings: €${(avgPower * 24 * 0.12).toFixed(0)}`,
+      confidence: 95,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    });
+
+    // 5. Forecast / prediction
+    const recentTrend = (secondAvg - firstAvg) / firstAvg;
+    const next6h = (avgPower * (1 + recentTrend * 1.2)).toFixed(1);
+    insightsList.push({
+      id: Date.now() + 50,
+      type: 'prediction',
+      text: `Next 6 hours forecast: ${next6h} kW average. Battery discharge advised during 18:00–21:00 peak.`,
+      confidence: 86,
+      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    });
+
+    return insightsList;
+  };
+
+  const computedInsights = useMemo(() => {
+    const meterName = selectedMeter === 'all' 
+      ? 'All Energy Meters' 
+      : energyMetersData.find(m => m.id === parseInt(selectedMeter))?.siteName || 'System';
+    return generateInsights(filteredData, meterName);
+  }, [filteredData, selectedMeter]);
+
+  // Dynamic 24-hour forecast
+  const computedForecast = useMemo(() => {
+    if (!filteredData.length) {
+      return [
+        { time: 'Now', historical: 48, predicted: 50 },
+        { time: '1h', historical: 52, predicted: 56 },
+        { time: '3h', historical: 58, predicted: 65 },
+        { time: '6h', historical: 62, predicted: 74 },
+        { time: '12h', historical: 68, predicted: 82 },
+        { time: '24h', historical: 71, predicted: 88 }
+      ];
+    }
+
+    const avgPower = filteredData.reduce((sum, r) => sum + r.power, 0) / filteredData.length;
+    const trend = Math.random() * 0.25 + 0.95; // slight variation based on data
+
+    return [
+      { time: 'Now', historical: Math.round(avgPower), predicted: Math.round(avgPower * 1.04) },
+      { time: '1h', historical: Math.round(avgPower * 1.08), predicted: Math.round(avgPower * 1.18) },
+      { time: '3h', historical: Math.round(avgPower * 1.12), predicted: Math.round(avgPower * 1.28) },
+      { time: '6h', historical: Math.round(avgPower * 1.15), predicted: Math.round(avgPower * 1.35) },
+      { time: '12h', historical: Math.round(avgPower * 1.10), predicted: Math.round(avgPower * 1.32) },
+      { time: '24h', historical: Math.round(avgPower * 1.05), predicted: Math.round(avgPower * 1.25) }
     ];
-    const template = templates[Math.floor(Math.random() * templates.length)];
-    return template
-      .replace('{percent}', (Math.random() * 20 + 5).toFixed(1))
-      .replace('{time}', ['6 PM', 'noon', 'evening peak'][Math.floor(Math.random() * 3)])
-      .replace('{action}', ['battery discharge', 'load shifting'][Math.floor(Math.random() * 2)])
-      .replace('{savings}', (Math.random() * 100 + 20).toFixed(0))
-      .replace('{component}', ['Y Phase', 'R Phase', 'Grid Inverter'][Math.floor(Math.random() * 3)])
-      .replace('{metric}', ['efficiency', 'voltage stability'][Math.floor(Math.random() * 2)])
-      .replace('{recommendation}', ['Auto-adjust loads', 'Reroute power'][Math.floor(Math.random() * 2)])
-      .replace('{system}', ['HVAC in Factory 2', 'Lighting in Warehouse'][Math.floor(Math.random() * 2)])
-      .replace('{method}', ['predictive cooling', 'smart scheduling'][Math.floor(Math.random() * 2)])
-      .replace('{device}', ['Inverter C', 'Wind Turbine A'][Math.floor(Math.random() * 2)])
-      .replace('{asset}', ['Solar Array 1', 'Battery Bank B'][Math.floor(Math.random() * 2)])
-      .replace('{trend}', ['+3%', '-2%', '+5%'][Math.floor(Math.random() * 3)])
-      .replace('{recommendation}', ['Continue schedule', 'Investigate further'][Math.floor(Math.random() * 2)]);
+  }, [filteredData]);
+
+  const selectedMeterName = selectedMeter === 'all'
+    ? 'All Energy Meters'
+    : energyMetersData.find(m => m.id === parseInt(selectedMeter))?.siteName + ' — ' +
+      energyMetersData.find(m => m.id === parseInt(selectedMeter))?.name;
+
+  // Real CSV export
+  const handleExport = () => {
+    if (!computedInsights.length) return;
+
+    const headers = ['Type', 'Message', 'Confidence (%)', 'Timestamp'];
+    const rows = computedInsights.map(i => [
+      i.type,
+      `"${i.text.replace(/"/g, '""')}"`,
+      i.confidence,
+      i.timestamp
+    ]);
+
+    const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `ai-insights-${selectedMeterName.replace(/ /g, '-')}.csv`;
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  // Forecast data
-  const forecastData = [
-    { time: 'Now', historical: 50, predicted: 52 },
-    { time: '1h', historical: 55, predicted: 58 },
-    { time: '3h', historical: 60, predicted: 70 },
-    { time: '6h', historical: 65, predicted: 80 },
-    { time: '12h', historical: 70, predicted: 85 },
-    { time: '24h', historical: 75, predicted: 90 }
-  ];
-
-  const getInsightColor = (type) => {
-    switch (type) {
-      case 'prediction': return 'from-blue-500 to-indigo-600';
-      case 'anomaly': return 'from-orange-500 to-red-600';
-      case 'optimization': return 'from-green-500 to-teal-600';
-      case 'maintenance': return 'from-yellow-500 to-amber-600';
-      case 'efficiency': return 'from-purple-500 to-violet-600';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
-
-  const getInsightIcon = (type) => {
-    switch (type) {
-      case 'prediction': return <TrendingUp size={20} />;
-      case 'anomaly': return <AlertTriangle size={20} />;
-      case 'optimization': return <Activity size={20} />;
-      case 'maintenance': return <Shield size={20} />;
-      case 'efficiency': return <Zap size={20} />;
-      default: return <Brain size={20} />;
-    }
-  };
+  // KPI calculations
+  const totalInsights = computedInsights.length;
+  const avgConfidence = totalInsights 
+    ? Math.round(computedInsights.reduce((sum, i) => sum + i.confidence, 0) / totalInsights) 
+    : 0;
+  const activePredictions = computedInsights.filter(i => i.type === 'prediction').length;
+  const optimizations = computedInsights.filter(i => i.type === 'optimization').length;
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen p-6">
-      <motion.h1 
-        initial={{ opacity: 0, y: -20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="text-4xl font-bold mb-2 text-gray-900 flex items-center gap-3"
-      >
-        <Brain size={40} className="text-blue-600" />
-        AI-Powered Insights & Predictions
-      </motion.h1>
-      <p className="text-lg text-gray-600 mb-8">Real-time intelligence from your energy ecosystem – December 17, 2025</p>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <div className="w-full px-6 py-6 max-w-screen-2xl mx-auto">
 
-      {/* Controls */}
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        className="bg-white rounded-2xl border border-gray-200 p-6 mb-8 shadow-lg"
-      >
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-gray-900">Live AI Mode</h3>
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="bg-violet-600 text-white p-2 rounded-2xl">
+              <Brain size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-gray-900">AI Insights &amp; Predictions</h1>
+              <p className="text-sm text-gray-500">Real-time intelligence from your energy ecosystem</p>
+            </div>
+          </div>
+
           <button
-            onClick={() => setLiveMode(!liveMode)}
-            className={`p-2 rounded-full transition-all duration-300 ${
-              liveMode ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            onClick={handleExport}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-3xl text-sm font-semibold transition-all"
           >
-            {liveMode ? <Pause size={20} /> : <Play size={20} />}
+            <Download size={16} />
+            Export AI Report
           </button>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
-          {liveMode 
-            ? `Generating insights every 15s – Next update in ${Math.floor(15 - (Date.now() % 15000) / 1000)}s` 
-            : 'Paused – Resume for real-time updates'
-          }
-        </p>
-        {isLoading && (
-          <motion.div 
-            initial={{ scale: 0 }} 
-            animate={{ scale: 1 }} 
-            className="flex items-center gap-2 mt-2 text-blue-600"
-          >
-            <Clock size={16} className="animate-spin" />
-            <span className="text-sm">Analyzing data...</span>
-          </motion.div>
-        )}
-      </motion.div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Forecast Chart */}
-        <motion.div 
-          initial={{ opacity: 0, x: -20 }} 
-          animate={{ opacity: 1, x: 0 }} 
-          className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg"
-        >
-          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <TrendingUp size={24} className="text-blue-600" />
-            24h Energy Demand Forecast
+        {/* CONTROLS */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-5 mb-8 flex flex-wrap gap-6 items-center">
+          {/* Live Toggle */}
+          <button
+            onClick={() => setLiveMode(!liveMode)}
+            className={`flex items-center gap-2 px-5 py-3 rounded-3xl font-medium text-sm transition-all ${
+              liveMode 
+                ? 'bg-emerald-600 text-white shadow-sm' 
+                : 'bg-white border border-gray-200 text-gray-700'
+            }`}
+          >
+            {liveMode ? <Pause size={16} /> : <Play size={16} />}
+            {liveMode ? 'Live AI Mode ON' : 'Live Mode OFF'}
+          </button>
+
+          {/* Date Range */}
+          <div className="flex items-center gap-3">
+            <Calendar size={18} className="text-gray-400" />
+            <input
+              type="date"
+              value={dateRange.from}
+              onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
+              className="px-4 py-3 border border-gray-200 rounded-3xl text-sm focus:border-violet-500 outline-none"
+            />
+            <span className="text-gray-400 text-sm">to</span>
+            <input
+              type="date"
+              value={dateRange.to}
+              onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
+              className="px-4 py-3 border border-gray-200 rounded-3xl text-sm focus:border-violet-500 outline-none"
+            />
+          </div>
+
+          {/* Meter Selector */}
+          <div className="flex items-center gap-3">
+            <BarChart3 size={18} className="text-gray-400" />
+            <select
+              value={selectedMeter}
+              onChange={(e) => setSelectedMeter(e.target.value)}
+              className="px-5 py-3 border border-gray-200 rounded-3xl text-sm focus:border-violet-500 outline-none min-w-[260px]"
+            >
+              <option value="all">All Energy Meters</option>
+              {energyMetersData.map(meter => (
+                <option key={meter.id} value={meter.id}>
+                  {meter.siteName} — {meter.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="ml-auto text-sm text-gray-500">
+            Showing insights for: <span className="font-semibold text-gray-900">{selectedMeterName}</span>
+          </div>
+        </div>
+
+        {/* KPI CARDS */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">TOTAL INSIGHTS</p>
+                <p className="text-2xl font-semibold text-gray-900 mt-2">{totalInsights}</p>
+              </div>
+              <Brain size={24} className="text-violet-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">AVG CONFIDENCE</p>
+                <p className="text-2xl font-semibold text-emerald-600 mt-2">{avgConfidence}%</p>
+              </div>
+              <TrendingUp size={24} className="text-emerald-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">ACTIVE PREDICTIONS</p>
+                <p className="text-2xl font-semibold text-amber-600 mt-2">{activePredictions}</p>
+              </div>
+              <AlertTriangle size={24} className="text-amber-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-xs uppercase tracking-widest text-gray-500 font-medium">OPTIMIZATIONS</p>
+                <p className="text-2xl font-semibold text-blue-600 mt-2">{optimizations}</p>
+              </div>
+              <Shield size={24} className="text-blue-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* FORECAST CHART */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-6 mb-8">
+          <h3 className="text-xl font-semibold mb-6 flex items-center gap-3">
+            <TrendingUp size={22} className="text-violet-600" />
+            24-Hour Energy Demand Forecast — {selectedMeterName}
           </h3>
-          <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={forecastData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
-              <YAxis stroke="#64748b" fontSize={12} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={computedForecast}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+              <XAxis dataKey="time" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip formatter={(value, name) => [value + ' kW', name]} />
+              <Line 
+                type="monotone" 
+                dataKey="historical" 
+                stroke="#64748b" 
+                strokeDasharray="4 3" 
+                strokeWidth={2} 
+                dot={false}
+                name="Historical"
               />
-              <Legend />
-              <Line type="monotone" dataKey="historical" stroke="#9ca3af" strokeDasharray="5 5" name="Historical" dot={false} />
-              <Line type="monotone" dataKey="predicted" stroke="#3b82f6" strokeWidth={3} name="Predicted" dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }} />
+              <Line 
+                type="monotone" 
+                dataKey="predicted" 
+                stroke="#8b5cf6" 
+                strokeWidth={3} 
+                dot={false}
+                name="AI Predicted"
+              />
             </LineChart>
           </ResponsiveContainer>
-          <p className="text-sm text-gray-500 mt-4">Based on current load patterns and weather data – Confidence: 94%</p>
-        </motion.div>
+        </div>
 
-        {/* Quick Insights */}
-        <motion.div 
-          initial={{ opacity: 0, x: 20 }} 
-          animate={{ opacity: 1, x: 0 }} 
-          className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg"
-        >
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Quick Wins</h3>
-          <div className="space-y-3">
-            {insights.slice(-3).reverse().map(insight => (
-              <motion.div
-                key={insight.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200"
-              >
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg ${getInsightColor(insight.type).replace('from-', 'bg-').replace('to-', ' via ')} text-white flex-shrink-0`}>
-                    {getInsightIcon(insight.type)}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{insight.text}</p>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <Clock size={12} />
-                        {insight.timestamp}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-medium">
-                          {insight.confidence}% Confidence
-                        </span>
-                        <div className="flex gap-1">
-                          {insight.actions.slice(0, 2).map((action, idx) => (
-                            <button key={idx} className="text-xs bg-white text-gray-700 px-2 py-1 rounded border hover:bg-gray-50 transition-colors">
-                              {action}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+        {/* AI INSIGHTS FEED */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold flex items-center gap-3">
+              <Brain size={22} className="text-violet-600" />
+              AI Insights Feed
+            </h3>
+            {liveMode && (
+              <div className="flex items-center gap-2 text-xs bg-emerald-100 text-emerald-700 px-4 py-2 rounded-3xl">
+                <Clock size={14} />
+                Live • updates every 7 seconds
+              </div>
+            )}
           </div>
-        </motion.div>
-      </div>
 
-      {/* Full Insights Feed */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="bg-white rounded-2xl border border-gray-200 p-6 shadow-lg"
-      >
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">AI Insights Feed</h3>
-        <div className="space-y-4 max-h-[500px] overflow-y-auto">
-          <AnimatePresence>
-            {insights.map(insight => (
-              <motion.div
-                key={insight.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="p-4 bg-gray-50 rounded-xl border border-gray-100 hover:shadow-md transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className={`p-2 rounded-lg ${getInsightColor(insight.type)} text-white flex-shrink-0`}>
-                    {getInsightIcon(insight.type)}
+          <div className="space-y-4 max-h-[460px] overflow-y-auto pr-2">
+            {computedInsights.length === 0 ? (
+              <div className="py-12 text-center text-gray-400">
+                No insights available for the selected filters
+              </div>
+            ) : (
+              computedInsights.map((insight) => (
+                <div
+                  key={insight.id}
+                  className={`p-5 rounded-3xl border flex gap-4 ${
+                    insight.type === 'prediction' ? 'bg-blue-50 border-blue-200' :
+                    insight.type === 'anomaly' ? 'bg-amber-50 border-amber-200' :
+                    insight.type === 'optimization' ? 'bg-emerald-50 border-emerald-200' :
+                    insight.type === 'efficiency' ? 'bg-purple-50 border-purple-200' : 'bg-gray-50 border-gray-200'
+                  }`}
+                >
+                  <div className="flex-shrink-0 mt-0.5">
+                    {insight.type === 'prediction' && <TrendingUp size={20} className="text-blue-600" />}
+                    {insight.type === 'anomaly' && <AlertTriangle size={20} className="text-amber-600" />}
+                    {insight.type === 'optimization' && <Activity size={20} className="text-emerald-600" />}
+                    {insight.type === 'efficiency' && <Zap size={20} className="text-purple-600" />}
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="font-semibold text-gray-900 text-sm">{insight.type.toUpperCase()} INSIGHT</h4>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        insight.confidence > 90 ? 'bg-green-100 text-green-800' : 
-                        insight.confidence > 80 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {insight.confidence}%
+                    <p className="text-base font-medium text-gray-900 leading-tight">{insight.text}</p>
+                    <div className="flex justify-between items-center mt-4">
+                      <span className="text-xs font-semibold text-gray-400">{insight.timestamp}</span>
+                      <span className="inline-flex items-center px-3 py-1 text-xs bg-white rounded-3xl border border-gray-200 font-medium">
+                        {insight.confidence}% confidence
                       </span>
-                    </div>
-                    <p className="text-sm text-gray-700 mb-3">{insight.text}</p>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="text-gray-500 flex items-center gap-1">
-                        <Clock size={12} />
-                        {insight.timestamp}
-                      </span>
-                      <div className="flex gap-1">
-                        {insight.actions.map((action, idx) => (
-                          <button key={idx} className="bg-white text-gray-700 px-3 py-1 rounded-md border hover:bg-gray-100 transition-colors text-xs">
-                            {action}
-                          </button>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              ))
+            )}
+          </div>
         </div>
-        <div className="mt-4 text-center text-sm text-gray-500">
-          {liveMode && `Live – ${insights.length} insights generated today`}
-        </div>
-      </motion.div>
-
-      {/* Footer Note */}
-      <motion.div 
-        initial={{ opacity: 0 }} 
-        animate={{ opacity: 1 }} 
-        className="mt-8 text-center text-sm text-gray-500"
-      >
-        Powered by xAI – Insights updated in real-time based on system telemetry
-      </motion.div>
+      </div>
     </div>
   );
 };

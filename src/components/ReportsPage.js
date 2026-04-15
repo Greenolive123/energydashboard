@@ -1,371 +1,514 @@
-// ReportsPage.js - Comprehensive Reports Management Component for Super Admin
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { jsPDF } from 'jspdf';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Download, FileText, Filter, Search, Calendar, Clock,CheckCircle,ChevronDown, TrendingUp, Activity, Zap, Shield, Plus, Edit, Trash2 } from 'lucide-react';
+import { 
+  Download, 
+  FileText, 
+  Filter, 
+  Search, 
+  Calendar, 
+  CheckCircle, 
+  TrendingUp, 
+  Activity, 
+  Zap, 
+  Shield, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  BarChart3 
+} from 'lucide-react';
+
+const energyMetersData = [
+  { id: 1, siteName: "Home 1", name: "Chennai", type: "Energy" },
+  { id: 2, siteName: "Home 2", name: "Coimbature", type: "Energy" },
+  { id: 3, siteName: "Home 3", name: "Kerala", type: "Energy" },
+  { id: 4, siteName: "Home 4", name: "bangalore", type: "Energy" },
+  { id: 5, siteName: "Home 5", name: "Visak", type: "Energy" },
+  { id: 6, siteName: "Home 6", name: "pune", type: "Energy" }
+];
+
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
   const [filteredReports, setFilteredReports] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('All');
-  const [sortBy, setSortBy] = useState('date'); // date, title, type
-  const [sortOrder, setSortOrder] = useState('desc'); // asc, desc
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [newReport, setNewReport] = useState({ title: '', date: '', type: 'PDF' });
+  const [selectedMeter, setSelectedMeter] = useState('all');
+  const [dateRange, setDateRange] = useState({ from: '2025-01-01', to: '2025-12-31' });
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [newReportTitle, setNewReportTitle] = useState('');
+  const [currentReport, setCurrentReport] = useState(null); // preview after generation
+  const [energyReadings, setEnergyReadings] = useState([]);
 
-  // Mock reports data (aggregated from system data)
+  // Generate realistic master dataset (once)
+  const generateMockEnergyData = () => {
+    const readings = [];
+    let idCounter = 1;
+    const startDate = new Date('2025-01-01');
+
+    for (let dayOffset = 0; dayOffset < 330; dayOffset += 2) { // ~165 days
+      for (let meterId = 1; meterId <= 6; meterId++) {
+        for (let slot = 0; slot < 4; slot++) { // 4 readings per day
+          const timestamp = new Date(startDate);
+          timestamp.setDate(timestamp.getDate() + dayOffset);
+          timestamp.setHours(6 + slot * 5 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60));
+
+          const voltage = 225 + Math.random() * 18;
+          const current = 3 + Math.random() * 28;
+          const power = parseFloat((voltage * current / 1000).toFixed(2));
+          const energy = parseFloat((power * 0.25).toFixed(2)); // 15-min interval
+
+          readings.push({
+            id: idCounter++,
+            meterId,
+            timestamp: timestamp.toISOString(),
+            voltage: parseFloat(voltage.toFixed(1)),
+            current: parseFloat(current.toFixed(1)),
+            power,
+            energy
+          });
+        }
+      }
+    }
+    return readings.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+  };
+
+  // Load everything from localStorage on mount
   useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      const mockReports = [
-        { id: 1, title: 'Monthly Energy Report - December 2025', date: '2025-12-01', type: 'PDF', status: 'Generated', size: '2.5 MB', generatedBy: 'System' },
-        { id: 2, title: 'Quarterly Efficiency Analysis - Q4 2025', date: '2025-10-01', type: 'Excel', status: 'Generated', size: '1.8 MB', generatedBy: 'Admin' },
-        { id: 3, title: 'Annual Carbon Impact Summary - 2025', date: '2025-01-01', type: 'PDF', status: 'Generated', size: '3.2 MB', generatedBy: 'System' },
-        { id: 4, title: 'Device Health Overview - November 2025', date: '2025-11-15', type: 'PDF', status: 'Generating', size: '-', generatedBy: 'Admin' },
-        { id: 5, title: 'Alert Summary Report - Q4 2025', date: '2025-10-01', type: 'CSV', status: 'Generated', size: '0.8 MB', generatedBy: 'System' },
-        { id: 6, title: 'Production Forecast - 2026', date: '2025-12-17', type: 'Excel', status: 'Generated', size: '2.1 MB', generatedBy: 'Admin' }
-      ];
-      setReports(mockReports);
-      setFilteredReports(mockReports);
-    }, 500);
+    // Energy readings (master dataset)
+    let savedReadings = localStorage.getItem('energyReadings');
+    if (savedReadings) {
+      setEnergyReadings(JSON.parse(savedReadings));
+    } else {
+      const generated = generateMockEnergyData();
+      setEnergyReadings(generated);
+      localStorage.setItem('energyReadings', JSON.stringify(generated));
+    }
+
+    // Saved reports
+    const savedReports = localStorage.getItem('reports');
+    if (savedReports) {
+      const parsed = JSON.parse(savedReports);
+      setReports(parsed);
+      setFilteredReports(parsed);
+    }
   }, []);
 
-  // Filter and search reports
+  // Filter saved reports list
   useEffect(() => {
     let filtered = [...reports];
 
-    // Search
     if (searchTerm) {
-      filtered = filtered.filter(report =>
-        report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        report.generatedBy.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(r =>
+        r.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Filter by type
     if (filterType !== 'All') {
-      filtered = filtered.filter(report => report.type === filterType);
+      filtered = filtered.filter(r => r.type === filterType);
     }
 
-    // Sort
-    filtered.sort((a, b) => {
-      let aVal, bVal;
-      switch (sortBy) {
-        case 'date':
-          aVal = new Date(a.date);
-          bVal = new Date(b.date);
-          break;
-        case 'title':
-          aVal = a.title;
-          bVal = b.title;
-          break;
-        case 'type':
-          aVal = a.type;
-          bVal = b.type;
-          break;
-        default:
-          return 0;
-      }
-      return sortOrder === 'asc' ? (aVal > bVal ? 1 : -1) : (aVal < bVal ? 1 : -1);
+    if (selectedMeter !== 'all') {
+      const meterName = energyMetersData.find(m => m.id === parseInt(selectedMeter))?.siteName;
+      filtered = filtered.filter(r => r.meter === meterName);
+    }
+
+    // Date filter on report generation date
+    filtered = filtered.filter(r => {
+      const reportDate = new Date(r.generatedDate);
+      return reportDate >= new Date(dateRange.from) && reportDate <= new Date(dateRange.to);
     });
 
     setFilteredReports(filtered);
-  }, [searchTerm, filterType, sortBy, sortOrder, reports]);
+  }, [reports, searchTerm, filterType, selectedMeter, dateRange]);
 
-  const handleSort = (field) => {
-    if (sortBy === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(field);
-      setSortOrder('desc');
-    }
+  // Download CSV helper
+  const downloadCSV = (reportData, title) => {
+    if (!reportData || reportData.length === 0) return;
+
+    const headers = ['Timestamp', 'Meter Name', 'Voltage (V)', 'Current (A)', 'Power (kW)', 'Energy (kWh)'];
+    const csvRows = [
+      headers.join(','),
+      ...reportData.map(row =>
+        [
+          row.timestamp,
+          `"${row.meterName}"`,
+          row.voltage,
+          row.current,
+          row.power,
+          row.energy
+        ].join(',')
+      )
+    ];
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${title.replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
-  const handleDownload = (report) => {
-    // Simulate download with PDF generation for demo
-    if (report.type === 'PDF') {
-      const doc = new jsPDF();
-      doc.text(`${report.title} - Generated on ${new Date().toLocaleDateString()}`, 10, 10);
-      doc.text(`Status: ${report.status}`, 10, 20);
-      doc.text(`Size: ${report.size}`, 10, 30);
-      doc.text(`Generated by: ${report.generatedBy}`, 10, 40);
-      doc.save(`${report.title.replace(/ /g, '_')}.pdf`);
-    } else {
-      alert(`Downloading ${report.title} as ${report.type}...`);
-    }
-  };
+  // Generate real report
+  const handleGenerateReport = () => {
+    if (!energyReadings.length) return;
 
-  const generateNewReport = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      const newId = reports.length + 1;
-      const generatedReport = {
-        id: newId,
-        title: newReport.title || 'Custom Report',
-        date: newReport.date || new Date().toISOString().split('T')[0],
-        type: newReport.type,
-        status: 'Generated',
-        size: '1.2 MB',
-        generatedBy: 'Admin'
+    const fromDate = new Date(dateRange.from);
+    const toDate = new Date(dateRange.to);
+
+    // Filter master dataset
+    const filteredReadings = energyReadings.filter(reading => {
+      const ts = new Date(reading.timestamp);
+      const meterMatch = selectedMeter === 'all' || reading.meterId === parseInt(selectedMeter);
+      return meterMatch && ts >= fromDate && ts <= toDate;
+    });
+
+    // Map to clean report rows
+    const reportRows = filteredReadings.map(reading => {
+      const meterInfo = energyMetersData.find(m => m.id === reading.meterId);
+      return {
+        timestamp: reading.timestamp,
+        meterName: meterInfo ? `${meterInfo.siteName} — ${meterInfo.name}` : 'Unknown',
+        voltage: reading.voltage,
+        current: reading.current,
+        power: reading.power,
+        energy: reading.energy
       };
-      setReports(prev => [...prev, generatedReport]);
-      setNewReport({ title: '', date: '', type: 'PDF' });
-      setShowForm(false);
-      setIsGenerating(false);
-      alert('Report generated successfully!');
-    }, 2000);
+    });
+
+    // Create report object
+    const meterDisplay = selectedMeter === 'all'
+      ? 'All Meters'
+      : energyMetersData.find(m => m.id === parseInt(selectedMeter))?.siteName || 'Unknown';
+
+    const newReportObj = {
+      id: Date.now(),
+      title: newReportTitle || `Energy Report - ${meterDisplay}`,
+      generatedDate: new Date().toISOString().split('T')[0],
+      type: 'CSV',
+      meter: meterDisplay,
+      fromDate: dateRange.from,
+      toDate: dateRange.to,
+      reportData: reportRows
+    };
+
+    // Save to state + localStorage
+    const updatedReports = [...reports, newReportObj];
+    setReports(updatedReports);
+    localStorage.setItem('reports', JSON.stringify(updatedReports));
+
+    // Show preview
+    setCurrentReport(newReportObj);
+
+    // Reset modal
+    setNewReportTitle('');
+    setShowGenerateModal(false);
   };
 
+  // Delete report
   const deleteReport = (id) => {
-    setReports(prev => prev.filter(r => r.id !== id));
+    if (window.confirm('Delete this report permanently?')) {
+      const updated = reports.filter(r => r.id !== id);
+      setReports(updated);
+      localStorage.setItem('reports', JSON.stringify(updated));
+      if (currentReport && currentReport.id === id) setCurrentReport(null);
+    }
   };
 
-  // Analytics
-  const totalReports = filteredReports.length;
-  const pdfCount = filteredReports.filter(r => r.type === 'PDF').length;
-  const excelCount = filteredReports.filter(r => r.type === 'Excel').length;
-  const csvCount = filteredReports.filter(r => r.type === 'CSV').length;
-  const generatedCount = filteredReports.filter(r => r.status === 'Generated').length;
+  // KPI counts
+  const totalReports = reports.length;
+  const csvCount = reports.filter(r => r.type === 'CSV').length;
 
   return (
-    <div className="bg-gray-100 min-h-screen p-6">
-      <motion.h1 
-        initial={{ opacity: 0, y: -20 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        className="text-3xl font-bold mb-8 text-gray-900 flex items-center gap-3"
-      >
-        <FileText size={32} className="text-blue-500" />
-        Super Admin: Reports Management
-      </motion.h1>
+    <div className="min-h-screen bg-gray-50 font-sans">
+      <div className="w-full px-6 py-6 max-w-screen-2xl mx-auto">
 
-      {/* Analytics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <FileText size={20} className="text-blue-600" />
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="bg-blue-600 text-white p-2 rounded-2xl">
+              <FileText size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Reports</h1>
+              <p className="text-sm text-gray-500">Filtered energy data exports</p>
+            </div>
           </div>
-          <p className="text-xs text-gray-500">Total Reports</p>
-          <p className="text-2xl font-bold text-gray-900">{totalReports}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <Download size={20} className="text-green-600" />
-          </div>
-          <p className="text-xs text-gray-500">PDF</p>
-          <p className="text-2xl font-bold text-green-600">{pdfCount}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp size={20} className="text-yellow-600" />
-          </div>
-          <p className="text-xs text-gray-500">Excel</p>
-          <p className="text-2xl font-bold text-yellow-600">{excelCount}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <Activity size={20} className="text-purple-600" />
-          </div>
-          <p className="text-xs text-gray-500">CSV</p>
-          <p className="text-2xl font-bold text-purple-600">{csvCount}</p>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle size={20} className="text-teal-600" />
-          </div>
-          <p className="text-xs text-gray-500">Generated</p>
-          <p className="text-2xl font-bold text-teal-600">{generatedCount}</p>
-        </div>
-      </div>
 
-      {/* Controls */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          <button
+            onClick={() => setShowGenerateModal(true)}
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-3xl text-sm font-semibold transition-all"
+          >
+            <Plus size={18} />
+            Generate Report
+          </button>
+        </div>
+
+        {/* KPI CARDS - compact */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex items-center gap-3">
+              <FileText className="text-blue-600" size={20} />
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest font-medium text-gray-500">TOTAL REPORTS</p>
+                <p className="text-3xl font-semibold text-gray-900 mt-1">{totalReports}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex items-center gap-3">
+              <Download className="text-emerald-600" size={20} />
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest font-medium text-gray-500">CSV EXPORTS</p>
+                <p className="text-3xl font-semibold text-emerald-600 mt-1">{csvCount}</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-3xl p-5 border border-gray-100">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="text-teal-600" size={20} />
+              <div className="flex-1">
+                <p className="text-xs uppercase tracking-widest font-medium text-gray-500">GENERATED</p>
+                <p className="text-3xl font-semibold text-teal-600 mt-1">{totalReports}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FILTERS */}
+        <div className="bg-white rounded-3xl border border-gray-100 p-5 mb-8 flex flex-wrap items-center gap-6">
+          {/* Date Range */}
+          <div className="flex items-center gap-3">
+            <Calendar size={18} className="text-gray-400" />
+            <input
+              type="date"
+              value={dateRange.from}
+              onChange={(e) => setDateRange({ ...dateRange, from: e.target.value })}
+              className="px-4 py-3 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none"
+            />
+            <span className="text-gray-400 text-sm">to</span>
+            <input
+              type="date"
+              value={dateRange.to}
+              onChange={(e) => setDateRange({ ...dateRange, to: e.target.value })}
+              className="px-4 py-3 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Meter */}
+          <div className="flex items-center gap-3">
+            <BarChart3 size={18} className="text-gray-400" />
+            <select
+              value={selectedMeter}
+              onChange={(e) => setSelectedMeter(e.target.value)}
+              className="px-5 py-3 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none min-w-[260px]"
+            >
+              <option value="all">All Energy Meters</option>
+              {energyMetersData.map(meter => (
+                <option key={meter.id} value={meter.id}>
+                  {meter.siteName} — {meter.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Search */}
+          <div className="flex-1 min-w-[260px] relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
               placeholder="Search reports..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-11 py-3 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none"
             />
           </div>
+
+          {/* Type Filter */}
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-5 py-3 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none min-w-[160px]"
           >
             <option value="All">All Types</option>
-            <option value="PDF">PDF</option>
-            <option value="Excel">Excel</option>
             <option value="CSV">CSV</option>
           </select>
-          <div className="flex flex-wrap gap-2">
-            {['date', 'title', 'type'].map(field => (
-              <button
-                key={field}
-                onClick={() => handleSort(field)}
-                className={`px-3 py-1 text-xs rounded-full border font-medium flex items-center gap-1 ${
-                  sortBy === field
-                    ? sortOrder === 'desc'
-                      ? 'bg-blue-100 text-blue-700 border-blue-300'
-                      : 'bg-blue-100 text-blue-700 border-blue-300 rotate-180'
-                    : 'bg-white text-gray-500 border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {field.charAt(0).toUpperCase() + field.slice(1)}
-                {sortBy === field && <ChevronDown size={12} className={sortOrder === 'asc' ? 'rotate-180' : ''} />}
-              </button>
-            ))}
+        </div>
+
+        {/* CURRENT GENERATED REPORT PREVIEW */}
+        {currentReport && (
+          <div className="mb-10 bg-white rounded-3xl border border-gray-100 overflow-hidden">
+            <div className="px-6 pt-6 pb-4 flex items-center justify-between border-b">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">{currentReport.title}</h2>
+                <p className="text-sm text-gray-500">
+                  {currentReport.fromDate} — {currentReport.toDate} • {currentReport.meter}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => downloadCSV(currentReport.reportData, currentReport.title)}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl text-sm font-semibold"
+                >
+                  <Download size={16} /> Download CSV
+                </button>
+                <button
+                  onClick={() => setCurrentReport(null)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-gray-50">
+                    <th className="text-left py-4 px-6 font-medium text-gray-500">TIMESTAMP</th>
+                    <th className="text-left py-4 px-6 font-medium text-gray-500">METER</th>
+                    <th className="text-right py-4 px-6 font-medium text-gray-500">VOLTAGE (V)</th>
+                    <th className="text-right py-4 px-6 font-medium text-gray-500">CURRENT (A)</th>
+                    <th className="text-right py-4 px-6 font-medium text-gray-500">POWER (kW)</th>
+                    <th className="text-right py-4 px-6 font-medium text-gray-500">ENERGY (kWh)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {currentReport.reportData.map((row, i) => (
+                    <tr key={i} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4 font-mono text-xs text-gray-500">{new Date(row.timestamp).toLocaleString('en-GB')}</td>
+                      <td className="px-6 py-4 text-gray-900">{row.meterName}</td>
+                      <td className="px-6 py-4 text-right font-medium">{row.voltage}</td>
+                      <td className="px-6 py-4 text-right font-medium">{row.current}</td>
+                      <td className="px-6 py-4 text-right font-medium">{row.power}</td>
+                      <td className="px-6 py-4 text-right font-medium">{row.energy}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2 ml-auto"
-          >
-            <Plus size={16} />
-            Generate Report
-          </button>
+        )}
+
+        {/* SAVED REPORTS LIST */}
+        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+          {filteredReports.length === 0 ? (
+            <div className="py-16 text-center">
+              <FileText size={48} className="mx-auto mb-4 text-gray-300" />
+              <h3 className="text-lg font-medium text-gray-900">No reports found</h3>
+              <p className="text-gray-500 mt-1">Generate a new report above</p>
+            </div>
+          ) : (
+            filteredReports.map(report => (
+              <div
+                key={report.id}
+                className="px-6 py-5 border-b last:border-none flex items-center gap-6 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex-shrink-0">
+                  <FileText size={24} className="text-blue-600" />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-gray-900 truncate">{report.title}</h4>
+                    <span className="inline-flex items-center px-3 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-3xl">
+                      {report.type}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {report.generatedDate} • {report.meter} • {report.fromDate} — {report.toDate}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => downloadCSV(report.reportData, report.title)}
+                    className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium border border-gray-200 hover:bg-gray-50 rounded-3xl"
+                  >
+                    <Download size={16} /> CSV
+                  </button>
+                  <button
+                    onClick={() => deleteReport(report.id)}
+                    className="p-3 text-red-400 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
-      {/* Generate New Report Form */}
-      <AnimatePresence>
-        {showForm && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="bg-white rounded-xl border border-gray-200 p-6 mb-6"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Generate New Report</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="Report Title"
-                value={newReport.title}
-                onChange={(e) => setNewReport({ ...newReport, title: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <input
-                type="date"
-                value={newReport.date}
-                onChange={(e) => setNewReport({ ...newReport, date: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <select
-                value={newReport.type}
-                onChange={(e) => setNewReport({ ...newReport, type: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="PDF">PDF</option>
-                <option value="Excel">Excel</option>
-                <option value="CSV">CSV</option>
-              </select>
+      {/* GENERATE MODAL */}
+      {showGenerateModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl">
+            <div className="px-6 pt-6">
+              <h2 className="text-xl font-semibold">Generate New Report</h2>
             </div>
-            <div className="flex gap-2 mt-4">
+
+            <div className="px-6 pt-2 pb-6 space-y-6">
+              {/* Title */}
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Report Title</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Q4 Energy Consumption"
+                  value={newReportTitle}
+                  onChange={(e) => setNewReportTitle(e.target.value)}
+                  className="w-full px-5 py-4 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none"
+                />
+              </div>
+
+              {/* Selected filters summary */}
+              <div className="bg-gray-50 rounded-3xl p-5 text-sm">
+                <div className="flex justify-between mb-3">
+                  <span className="text-gray-500">Meter</span>
+                  <span className="font-medium">
+                    {selectedMeter === 'all' ? 'All Energy Meters' : energyMetersData.find(m => m.id === parseInt(selectedMeter))?.siteName}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Date Range</span>
+                  <span className="font-medium">{dateRange.from} — {dateRange.to}</span>
+                </div>
+              </div>
+
+              {/* File type */}
+              <div>
+                <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">Export Format</label>
+                <select
+                  className="w-full px-5 py-4 border border-gray-200 rounded-3xl text-sm focus:border-blue-500 outline-none"
+                  defaultValue="CSV"
+                >
+                  <option value="CSV">CSV (Raw Data)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex border-t border-gray-100">
               <button
-                onClick={generateNewReport}
-                disabled={isGenerating}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
-              >
-                {isGenerating ? <Clock size={16} className="animate-spin" /> : <TrendingUp size={16} />}
-                Generate
-              </button>
-              <button
-                onClick={() => setShowForm(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400"
+                onClick={() => setShowGenerateModal(false)}
+                className="flex-1 py-6 text-sm font-semibold border-r hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Reports List */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow overflow-hidden">
-        <div className="overflow-y-auto max-h-[60vh]">
-          <AnimatePresence>
-            {filteredReports.map(report => (
-              <motion.div
-                key={report.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="p-6 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              <button
+                onClick={handleGenerateReport}
+                className="flex-1 py-6 bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0">
-                        {report.type === 'PDF' && <FileText size={24} className="text-blue-600 mt-1" />}
-                        {report.type === 'Excel' && <Activity size={24} className="text-green-600 mt-1" />}
-                        {report.type === 'CSV' && <TrendingUp size={24} className="text-purple-600 mt-1" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-gray-900 truncate">{report.title}</h4>
-                        <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                          <Calendar size={14} />
-                          {report.date} • {report.type} • {report.size} • {report.generatedBy}
-                        </p>
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                          report.status === 'Generated' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                        } mt-2`}>
-                          {report.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4 flex-shrink-0">
-                    <button
-                      onClick={() => handleDownload(report)}
-                      className="p-2 text-blue-600 hover:text-blue-800 rounded-lg hover:bg-blue-50 transition-colors"
-                      title="Download"
-                    >
-                      <Download size={18} />
-                    </button>
-                    <button
-                      onClick={() => {/* Edit functionality */ alert('Edit report')}}
-                      className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                      title="Edit"
-                    >
-                      <Edit size={18} />
-                    </button>
-                    <button
-                      onClick={() => deleteReport(report.id)}
-                      className="p-2 text-red-500 hover:text-red-700 rounded-lg hover:bg-red-50 transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                Generate &amp; Preview
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Empty State */}
-      {filteredReports.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-12 bg-white rounded-xl border border-gray-200 shadow"
-        >
-          <FileText size={48} className="mx-auto mb-4 text-gray-400" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No Reports Found</h3>
-          <p className="text-gray-500 mb-4">Try adjusting your search or filters, or generate a new report.</p>
-          <button
-            onClick={() => setShowForm(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 flex items-center gap-2 mx-auto"
-          >
-            <Plus size={16} />
-            Generate First Report
-          </button>
-        </motion.div>
       )}
     </div>
   );
